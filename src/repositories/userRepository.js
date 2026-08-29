@@ -2,33 +2,96 @@
 
 const { getPool } = require('../config/database');
 
+function placeholders(values) {
+  return values.map(() => '?').join(', ');
+}
+
 async function listUsers() {
-  const [rows] = await getPool().query(`
-    SELECT u.id, u.name, u.username, u.email, u.is_active, u.last_login_at,
-           u.created_at, u.updated_at, u.role_id, r.code AS role_code, r.name AS role_name
-      FROM users u
-      LEFT JOIN roles r ON r.id = u.role_id
-     ORDER BY u.name, u.id
+  const [users] = await getPool().query(`
+    SELECT id, name, username, email, is_active, last_login_at, created_at, updated_at
+      FROM users
+     ORDER BY name, id
   `);
-  return rows;
+
+  if (users.length === 0) return [];
+  const ids = users.map((user) => user.id);
+  const inClause = placeholders(ids);
+
+  const [roleRows] = await getPool().execute(
+    `SELECT ur.user_id, r.id, r.code, r.name, r.is_active
+       FROM user_roles ur
+       JOIN roles r ON r.id = ur.role_id
+      WHERE ur.user_id IN (${inClause})
+      ORDER BY r.name, r.id`,
+    ids
+  );
+  const [permissionRows] = await getPool().execute(
+    `SELECT up.user_id, p.id, p.code, p.description
+       FROM user_permissions up
+       JOIN permissions p ON p.id = up.permission_id
+      WHERE up.user_id IN (${inClause})
+      ORDER BY p.code, p.id`,
+    ids
+  );
+
+  const rolesByUser = new Map();
+  const permissionsByUser = new Map();
+  for (const row of roleRows) {
+    const key = String(row.user_id);
+    if (!rolesByUser.has(key)) rolesByUser.set(key, []);
+    rolesByUser.get(key).push({ id: String(row.id), code: row.code, name: row.name, is_active: Boolean(row.is_active) });
+  }
+  for (const row of permissionRows) {
+    const key = String(row.user_id);
+    if (!permissionsByUser.has(key)) permissionsByUser.set(key, []);
+    permissionsByUser.get(key).push({ id: String(row.id), code: row.code, description: row.description });
+  }
+
+  return users.map((user) => ({
+    ...user,
+    roles: rolesByUser.get(String(user.id)) || [],
+    direct_permissions: permissionsByUser.get(String(user.id)) || []
+  }));
 }
 
 async function findUserForUpdate(id, connection) {
   const [rows] = await connection.execute(
-    `SELECT u.id, u.name, u.username, u.email, u.is_active, u.role_id, u.auth_version,
-            r.code AS role_code, r.name AS role_name
-       FROM users u
-       LEFT JOIN roles r ON r.id = u.role_id
-      WHERE u.id = ? FOR UPDATE`,
+    `SELECT id, name, username, email, is_active, auth_version
+       FROM users
+      WHERE id = ? FOR UPDATE`,
     [id]
   );
   return rows[0] || null;
 }
 
-async function findRoleById(roleId, connection = null) {
+async function findRolesByIds(roleIds, connection = null) {
+  if (roleIds.length === 0) return [];
   const db = connection || getPool();
-  const [rows] = await db.execute('SELECT id, code, name, is_active FROM roles WHERE id = ? LIMIT 1', [roleId]);
-  return rows[0] || null;
+  const [rows] = await db.execute(
+    `SELECT id, code, name, is_active FROM roles WHERE id IN (${placeholders(roleIds)}) ORDER BY name, id`,
+    roleIds
+  );
+  return rows;
+}
+
+async function findPermissionsByIds(permissionIds, connection = null) {
+  if (permissionIds.length === 0) return [];
+  const db = connection || getPool();
+  const [rows] = await db.execute(
+    `SELECT id, code, description FROM permissions WHERE id IN (${placeholders(permissionIds)}) ORDER BY code, id`,
+    permissionIds
+  );
+  return rows;
+}
+
+async function getUserRoleIds(userId, connection) {
+  const [rows] = await connection.execute('SELECT role_id FROM user_roles WHERE user_id = ? ORDER BY role_id', [userId]);
+  return rows.map((row) => Number(row.role_id));
+}
+
+async function getUserPermissionIds(userId, connection) {
+  const [rows] = await connection.execute('SELECT permission_id FROM user_permissions WHERE user_id = ? ORDER BY permission_id', [userId]);
+  return rows.map((row) => Number(row.permission_id));
 }
 
 async function listRoles() {
@@ -55,7 +118,7 @@ async function listPermissions() {
 async function updateUser(id, changes, connection) {
   const columns = [];
   const values = [];
-  const mapping = { name: 'name', username: 'username', email: 'email', roleId: 'role_id', isActive: 'is_active' };
+  const mapping = { name: 'name', username: 'username', email: 'email', isActive: 'is_active' };
 
   for (const [key, column] of Object.entries(mapping)) {
     if (Object.prototype.hasOwnProperty.call(changes, key)) {
@@ -63,30 +126,61 @@ async function updateUser(id, changes, connection) {
       values.push(changes[key]);
     }
   }
-
   if (columns.length === 0) return;
-  if (Object.prototype.hasOwnProperty.call(changes, 'roleId') || Object.prototype.hasOwnProperty.call(changes, 'isActive')) {
-    columns.push('auth_version = auth_version + 1');
-  }
   values.push(id);
   await connection.execute(`UPDATE users SET ${columns.join(', ')} WHERE id = ?`, values);
 }
 
-async function countActiveAdministrators(connection) {
+async function replaceUserRoles(userId, roleIds, actorId, connection) {
+  await connection.execute('DELETE FROM user_roles WHERE user_id = ?', [userId]);
+  if (roleIds.length === 0) return;
+  const valuesSql = roleIds.map(() => '(?, ?, ?)').join(', ');
+  const values = roleIds.flatMap((roleId) => [userId, roleId, actorId]);
+  await connection.execute(
+    `INSERT INTO user_roles (user_id, role_id, assigned_by_user_id) VALUES ${valuesSql}`,
+    values
+  );
+}
+
+async function replaceUserPermissions(userId, permissionIds, actorId, connection) {
+  await connection.execute('DELETE FROM user_permissions WHERE user_id = ?', [userId]);
+  if (permissionIds.length === 0) return;
+  const valuesSql = permissionIds.map(() => '(?, ?, ?)').join(', ');
+  const values = permissionIds.flatMap((permissionId) => [userId, permissionId, actorId]);
+  await connection.execute(
+    `INSERT INTO user_permissions (user_id, permission_id, granted_by_user_id) VALUES ${valuesSql}`,
+    values
+  );
+}
+
+async function incrementAuthVersion(userId, connection) {
+  await connection.execute('UPDATE users SET auth_version = auth_version + 1 WHERE id = ?', [userId]);
+}
+
+async function countActiveAdministratorsForUpdate(connection) {
   const [rows] = await connection.query(`
-    SELECT COUNT(*) AS total
-      FROM users u JOIN roles r ON r.id = u.role_id
-     WHERE u.is_active = 1 AND r.code = 'ADMINISTRADOR'
+    SELECT u.id
+      FROM users u
+      JOIN user_roles ur ON ur.user_id = u.id
+      JOIN roles r ON r.id = ur.role_id AND r.code = 'ADMINISTRADOR' AND r.is_active = 1
+     WHERE u.is_active = 1
+     FOR UPDATE
   `);
-  return Number(rows[0].total);
+  return rows.length;
 }
 
 module.exports = {
-  countActiveAdministrators,
-  findRoleById,
+  countActiveAdministratorsForUpdate,
+  findPermissionsByIds,
+  findRolesByIds,
   findUserForUpdate,
+  getUserPermissionIds,
+  getUserRoleIds,
+  incrementAuthVersion,
   listPermissions,
   listRoles,
   listUsers,
+  replaceUserPermissions,
+  replaceUserRoles,
   updateUser
 };

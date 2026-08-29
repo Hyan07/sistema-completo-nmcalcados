@@ -4,12 +4,10 @@ const { getPool } = require('../config/database');
 
 const USER_SELECT = `
   SELECT
-    u.id, u.role_id, u.name, u.username, u.email, u.password_hash,
+    u.id, u.name, u.username, u.email, u.password_hash,
     u.is_active, u.last_login_at, u.password_changed_at,
-    u.failed_login_attempts, u.locked_until, u.auth_version,
-    r.code AS role_code, r.name AS role_name, r.is_active AS role_is_active
+    u.failed_login_attempts, u.locked_until, u.auth_version
   FROM users u
-  LEFT JOIN roles r ON r.id = u.role_id
 `;
 
 async function findUserByUsername(username) {
@@ -22,30 +20,49 @@ async function findUserById(id) {
   return rows[0] || null;
 }
 
+async function getActiveRolesByUserId(userId) {
+  const [rows] = await getPool().execute(
+    `SELECT r.id, r.code, r.name
+       FROM user_roles ur
+       JOIN roles r ON r.id = ur.role_id AND r.is_active = 1
+      WHERE ur.user_id = ?
+      ORDER BY r.name, r.id`,
+    [userId]
+  );
+  return rows;
+}
+
 async function getPermissionsByUserId(userId) {
   const [rows] = await getPool().execute(
-    `SELECT p.code
-       FROM users u
-       JOIN roles r ON r.id = u.role_id AND r.is_active = 1
-       JOIN role_permissions rp ON rp.role_id = r.id
-       JOIN permissions p ON p.id = rp.permission_id
-      WHERE u.id = ? AND u.is_active = 1
+    `SELECT DISTINCT p.code
+       FROM permissions p
+      WHERE p.id IN (
+        SELECT rp.permission_id
+          FROM user_roles ur
+          JOIN roles r ON r.id = ur.role_id AND r.is_active = 1
+          JOIN role_permissions rp ON rp.role_id = r.id
+         WHERE ur.user_id = ?
+        UNION
+        SELECT up.permission_id
+          FROM user_permissions up
+         WHERE up.user_id = ?
+      )
       ORDER BY p.code`,
-    [userId]
+    [userId, userId]
   );
   return rows.map((row) => row.code);
 }
 
 async function recordFailedLogin(userId, lockedUntil) {
   await getPool().execute(
-    `UPDATE users SET failed_login_attempts = failed_login_attempts + 1, locked_until = ? WHERE id = ?`,
+    'UPDATE users SET failed_login_attempts = failed_login_attempts + 1, locked_until = ? WHERE id = ?',
     [lockedUntil, userId]
   );
 }
 
 async function recordSuccessfulLogin(userId) {
   await getPool().execute(
-    `UPDATE users SET failed_login_attempts = 0, locked_until = NULL, last_login_at = CURRENT_TIMESTAMP(3) WHERE id = ?`,
+    'UPDATE users SET failed_login_attempts = 0, locked_until = NULL, last_login_at = CURRENT_TIMESTAMP(3) WHERE id = ?',
     [userId]
   );
 }
@@ -64,6 +81,7 @@ module.exports = {
   changePassword,
   findUserById,
   findUserByUsername,
+  getActiveRolesByUserId,
   getPermissionsByUserId,
   recordFailedLogin,
   recordSuccessfulLogin
