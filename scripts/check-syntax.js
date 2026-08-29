@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 
-const roots = ['server.js', 'src', 'scripts', 'tests'];
+const roots = ['server.js', 'src', 'scripts', 'tests', 'public/js'];
 const files = [];
 function collect(target) {
   if (!fs.existsSync(target)) return;

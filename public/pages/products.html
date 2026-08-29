@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NM Calçados | Produtos</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+<main class="admin-shell catalog-admin-shell">
+  <header class="admin-header"><div><p class="eyebrow">NM Calçados</p><h1>Produtos</h1><p class="muted">Categorias, marcas, produtos e imagens.</p></div><a class="secondary-link" href="/">Voltar</a></header>
+
+  <section class="catalog-grid">
+    <article class="admin-card">
+      <div class="section-heading"><div><h2>Categorias</h2><p class="muted">Hierarquia sem ciclos e desativação controlada.</p></div></div>
+      <form id="category-form" class="compact-form" hidden>
+        <label>Nome<input name="name" maxlength="120" required></label>
+        <label>Categoria pai<select name="parentId"><option value="">Sem categoria pai</option></select></label>
+        <button class="primary-button" type="submit">Adicionar</button>
+      </form>
+      <div class="table-wrap"><table class="compact-table"><thead><tr><th>Nome</th><th>Pai</th><th>Status</th><th></th></tr></thead><tbody id="categories-body"></tbody></table></div>
+    </article>
+
+    <article class="admin-card">
+      <div class="section-heading"><div><h2>Marcas</h2><p class="muted">Cadastro único para uso em todos os produtos.</p></div></div>
+      <form id="brand-form" class="compact-form" hidden>
+        <label>Nome<input name="name" maxlength="120" required></label>
+        <button class="primary-button" type="submit">Adicionar</button>
+      </form>
+      <div class="table-wrap"><table class="compact-table"><thead><tr><th>Nome</th><th>Status</th><th></th></tr></thead><tbody id="brands-body"></tbody></table></div>
+    </article>
+  </section>
+
+  <section id="product-create-card" class="admin-card" hidden>
+    <div class="section-heading"><div><h2>Novo produto</h2><p class="muted">Cor, tamanho e SKU serão configurados na próxima fase.</p></div></div>
+    <form id="product-form" class="product-form">
+      <label>Código interno<input name="internalCode" maxlength="80" required></label>
+      <label>Nome<input name="name" maxlength="180" required></label>
+      <label>Categoria<select name="categoryId"><option value="">Sem categoria</option></select></label>
+      <label>Marca<select name="brandId"><option value="">Sem marca</option></select></label>
+      <label>Modelo<input name="model" maxlength="120"></label>
+      <label>Público<input name="audience" maxlength="80" placeholder="Feminino, masculino, infantil..."></label>
+      <label>Coleção<input name="collectionName" maxlength="120"></label>
+      <label>Material<input name="material" maxlength="120"></label>
+      <label>Custo<input name="baseCostPrice" type="number" min="0" step="0.01" value="0.00" required></label>
+      <label>Venda<input name="baseSalePrice" type="number" min="0" step="0.01" value="0.00" required></label>
+      <label>Promoção<input name="promotionalPrice" type="number" min="0" step="0.01"></label>
+      <label class="check-field"><input name="isFeatured" type="checkbox"> Destaque</label>
+      <label class="check-field"><input name="isCatalogVisible" type="checkbox"> Visível no catálogo</label>
+      <label class="wide-field">Descrição<textarea name="description" maxlength="10000" rows="3"></textarea></label>
+      <button class="primary-button" type="submit">Cadastrar produto</button>
+    </form>
+  </section>
+
+  <section class="admin-card">
+    <div class="section-heading"><div><h2>Produtos cadastrados</h2><p id="product-count" class="muted"></p></div><button id="refresh-products" class="secondary-button" type="button">Atualizar</button></div>
+    <form id="product-filters" class="filter-bar">
+      <input name="q" placeholder="Buscar nome, código ou modelo">
+      <select name="categoryId"><option value="">Todas as categorias</option></select>
+      <select name="brandId"><option value="">Todas as marcas</option></select>
+      <select name="isActive"><option value="">Todos os status</option><option value="true">Ativos</option><option value="false">Inativos</option></select>
+      <select name="isCatalogVisible"><option value="">Catálogo: todos</option><option value="true">Publicados</option><option value="false">Não publicados</option></select>
+      <button class="secondary-button" type="submit">Filtrar</button>
+    </form>
+    <div class="table-wrap"><table><thead><tr><th>Produto</th><th>Categoria</th><th>Marca</th><th>Preço</th><th>Catálogo</th><th>Status</th><th>Ações</th></tr></thead><tbody id="products-body"></tbody></table></div>
+    <div class="pagination"><button id="prev-page" class="secondary-button" type="button">Anterior</button><span id="page-info" class="muted"></span><button id="next-page" class="secondary-button" type="button">Próxima</button></div>
+    <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+  </section>
+</main>
+
+<dialog id="product-dialog" class="wide-dialog"><form id="product-edit-form" method="dialog" class="product-form"><h2>Editar produto</h2>
+  <input name="id" type="hidden">
+  <label>Código interno<input name="internalCode" maxlength="80" required></label><label>Nome<input name="name" maxlength="180" required></label>
+  <label>Categoria<select name="categoryId"></select></label><label>Marca<select name="brandId"></select></label>
+  <label>Modelo<input name="model" maxlength="120"></label><label>Público<input name="audience" maxlength="80"></label><label>Coleção<input name="collectionName" maxlength="120"></label><label>Material<input name="material" maxlength="120"></label>
+  <label>Custo<input name="baseCostPrice" type="number" min="0" step="0.01" required></label><label>Venda<input name="baseSalePrice" type="number" min="0" step="0.01" required></label><label>Promoção<input name="promotionalPrice" type="number" min="0" step="0.01"></label>
+  <label class="check-field"><input name="isActive" type="checkbox"> Ativo</label><label class="check-field"><input name="isFeatured" type="checkbox"> Destaque</label><label class="check-field"><input name="isCatalogVisible" type="checkbox"> Visível no catálogo</label>
+  <label class="wide-field">Descrição<textarea name="description" maxlength="10000" rows="4"></textarea></label>
+  <div class="dialog-actions wide-field"><button id="cancel-product-edit" class="secondary-button" type="button">Cancelar</button><button class="primary-button" type="submit">Salvar</button></div>
+</form></dialog>
+
+<dialog id="images-dialog" class="wide-dialog"><div><div class="section-heading"><div><h2 id="images-title">Imagens do produto</h2><p class="muted">JPEG, PNG ou WebP. Até 5 MB por arquivo e 10 imagens por produto.</p></div><button id="close-images" class="secondary-button" type="button">Fechar</button></div>
+  <form id="image-upload-form" class="compact-form"><input name="images" type="file" accept="image/jpeg,image/png,image/webp" multiple required><input name="altText" maxlength="255" placeholder="Texto alternativo (opcional)"><button class="primary-button" type="submit">Enviar imagens</button></form>
+  <div id="image-gallery" class="image-gallery"></div><p id="image-feedback" class="feedback" role="status"></p>
+</div></dialog>
+
+<script src="/js/products.js" defer></script>
+</body>
+</html>
