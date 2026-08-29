@@ -4,133 +4,49 @@ ERP/POS monolítico e integrado para a NM Calçados, com backend Node.js/Express
 
 ## Estado atual
 
-**FASE 2 — Banco de dados e migrations concluída.**
+**FASE 3 — Autenticação, usuários e permissões concluída.**
 
-A aplicação possui bootstrap Express, configuração segura do MySQL, executor de migrations com checksum/lock e o modelo relacional base do ERP/POS. As regras funcionais dos módulos ainda serão implementadas incrementalmente nas próximas fases.
+Já existem bootstrap Express, conexão MySQL, migrations versionadas, modelo relacional base, autenticação por sessão persistida no MySQL, bcrypt, perfis/permissões (RBAC) no backend, primeiro administrador seguro, gestão básica de usuários, auditoria e telas de login/usuários.
 
-## Tecnologias
-
-- Node.js 20+
-- Express.js
-- HTML5, CSS3 e JavaScript puro
-- MySQL via `mysql2`
-- `dotenv`
-- `bcrypt`
-- `express-session`
-
-## Estrutura
-
-```text
-src/
-  config/
-    database.js
-    env.js
-  controllers/
-  services/
-  repositories/
-  routes/
-  middlewares/
-  utils/
-  database/
-    migrations/
-    seeds/
-public/
-  css/
-  js/
-  images/
-  pages/
-uploads/
-scripts/
-docs/
-server.js
-```
+Produtos e estoque ainda não possuem serviços/telas de negócio: começam nas próximas fases.
 
 ## Execução local
 
-Requisitos:
-
-- Node.js 20 ou superior;
-- npm;
-- MySQL 8+;
-- um banco vazio de desenvolvimento criado previamente.
+Requisitos: Node.js 20+, npm e MySQL 8+.
 
 ```bash
 npm install
 cp .env.example .env
 npm run db:check
 npm run db:migrate
+npm run auth:bootstrap-admin
 npm run dev
 ```
 
-No Windows:
+No Windows: `Copy-Item .env.example .env`.
 
-```powershell
-Copy-Item .env.example .env
-npm run db:check
-npm run db:migrate
-npm run dev
-```
+## Scripts
 
-A aplicação inicia por padrão em `http://localhost:3000`.
+- `npm start`
+- `npm run dev`
+- `npm run check`
+- `npm test`
+- `npm run db:check`
+- `npm run db:migrate`
+- `npm run auth:bootstrap-admin`
 
-Health check HTTP:
+## Segurança
 
-```text
-GET /api/health
-```
+O cookie é HTTP-only e `secure` em produção. A sessão fica no MySQL, não no MemoryStore. Mudança de senha, perfil ou status invalida sessões antigas usando `auth_version`. Autorizações são verificadas no backend em cada requisição autenticada. Consulte `docs/AUTENTICACAO.md`.
 
-## Banco de dados
+## Banco
 
-O projeto não cria o database automaticamente, pois ambientes de hospedagem normalmente controlam essa permissão. Crie um banco vazio no MySQL/Hostinger e configure as credenciais no `.env`.
-
-Exemplo apenas para desenvolvimento local:
-
-```sql
-CREATE DATABASE nm_calcados_dev
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
-```
-
-Depois execute:
-
-```bash
-npm run db:check
-npm run db:migrate
-```
-
-As migrations ficam em `src/database/migrations`. Não edite uma migration que já foi aplicada; crie outra com numeração superior.
-
-Detalhes do modelo: `docs/BANCO_DE_DADOS.md`.
-
-## Variáveis de ambiente
-
-O `.env` não deve ser versionado. Use `.env.example` somente como modelo e forneça valores próprios de cada ambiente.
-
-- `DB_HOST`
-- `DB_PORT`
-- `DB_NAME`
-- `DB_USER`
-- `DB_PASSWORD`
-- `DB_CONNECTION_LIMIT`
-
-O pool da aplicação não permite múltiplas instruções SQL na mesma consulta. Essa opção é ativada exclusivamente na conexão isolada do executor de migrations.
-
-## Scripts npm
-
-- `npm start`: inicia o servidor;
-- `npm run dev`: inicia com `node --watch`;
-- `npm run check`: valida sintaxe dos arquivos JavaScript principais;
-- `npm run db:check`: testa as credenciais e conexão com o MySQL;
-- `npm run db:migrate`: aplica migrations pendentes.
+Migrations ficam em `src/database/migrations/` e são controladas por `schema_migrations` com checksum. Não altere migrations já aplicadas. Consulte `docs/BANCO_DE_DADOS.md`.
 
 ## Produção / Hostinger
 
-A aplicação usa `process.env.PORT`, configura MySQL via ambiente e não depende de caminhos absolutos locais. Banco de desenvolvimento e banco de produção devem ser separados.
-
-Antes de qualquer migration em produção, realizar backup e conferir a migration em ambiente de homologação.
+Use credenciais exclusivas no ambiente, `NODE_ENV=production`, `SESSION_SECRET` aleatório, remova `ADMIN_PASSWORD` após o bootstrap e aplique migrations antes de iniciar uma versão que dependa delas.
 
 ## Próxima fase
 
-**FASE 3 — Autenticação, usuários e permissões.**
-
-A estrutura de `users`, `roles`, `permissions` e `role_permissions` já existe no banco. A próxima etapa implementará autenticação com bcrypt, sessão, autorização no backend e seed inicial seguro, sem credenciais reais no repositório.
+**FASE 4 — Categorias, marcas e produtos.**

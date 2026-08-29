@@ -1,26 +1,36 @@
 'use strict';
 
-async function verifyApi() {
-  const statusText = document.getElementById('api-status');
-  const statusRow = statusText?.closest('.status-row');
+const form = document.getElementById('login-form');
+const panel = document.getElementById('session-panel');
+const feedback = document.getElementById('feedback');
+const loginButton = document.getElementById('login-button');
+const logoutButton = document.getElementById('logout-button');
+const passwordInput = document.getElementById('password');
+const togglePassword = document.getElementById('toggle-password');
 
-  if (!statusText || !statusRow) return;
-
-  try {
-    const response = await fetch('/api/health', {
-      headers: { Accept: 'application/json' }
-    });
-
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-    const data = await response.json();
-    statusRow.dataset.status = data.status === 'ok' ? 'ok' : 'error';
-    statusText.textContent = data.status === 'ok' ? 'API disponível' : 'API indisponível';
-  } catch (error) {
-    statusRow.dataset.status = 'error';
-    statusText.textContent = 'API indisponível';
-    console.error('Falha no health check:', error);
-  }
+function setFeedback(message, isError = false) { feedback.textContent = message; feedback.classList.toggle('is-error', isError); }
+function showSession(user, permissions = []) {
+  form.hidden = true; panel.hidden = false;
+  document.getElementById('session-user').textContent = user.name;
+  document.getElementById('session-role').textContent = user.role?.name || 'Sem perfil';
+  document.getElementById('users-link').hidden = !permissions.includes('users.read');
 }
-
-verifyApi();
+function showLogin() { panel.hidden = true; form.hidden = false; }
+async function request(url, options = {}) {
+  const response = await fetch(url, { credentials: 'same-origin', headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }, ...options });
+  if (response.status === 204) return null;
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(body.message || 'Não foi possível concluir a operação.');
+  return body;
+}
+form.addEventListener('submit', async (event) => {
+  event.preventDefault(); loginButton.disabled = true; setFeedback('Autenticando...');
+  try {
+    const data = await request('/api/auth/login', { method: 'POST', body: JSON.stringify({ username: form.username.value, password: form.password.value }) });
+    form.reset(); showSession(data.user, data.permissions); setFeedback('Acesso autorizado.');
+  } catch (error) { setFeedback(error.message, true); }
+  finally { loginButton.disabled = false; }
+});
+logoutButton.addEventListener('click', async () => { try { await request('/api/auth/logout', { method: 'POST' }); } finally { showLogin(); setFeedback('Sessão encerrada.'); } });
+togglePassword.addEventListener('click', () => { const visible = passwordInput.type === 'text'; passwordInput.type = visible ? 'password' : 'text'; togglePassword.textContent = visible ? 'Mostrar' : 'Ocultar'; });
+request('/api/auth/me').then((data) => showSession(data.user, data.permissions)).catch(() => showLogin());
