@@ -2,20 +2,10 @@
 
 const { spawnSync } = require('child_process');
 
-function planBuildSteps(env = process.env) {
-  const production = String(env.NODE_ENV || '').trim().toLowerCase() === 'production';
-  const hasBootstrapPassword = Boolean(String(env.ADMIN_PASSWORD || '').trim());
-
-  const steps = [['run', 'verify']];
-  if (!production) return steps;
-
-  steps.push(['run', 'db:migrate']);
-  if (hasBootstrapPassword) {
-    steps.push(['run', 'auth:bootstrap-admin']);
-  } else {
-    steps.push(['run', 'deploy:check']);
-  }
-  return steps;
+function planBuildSteps() {
+  // O ambiente de build gerenciado da Hostinger não é o runtime da aplicação.
+  // Acesso ao MySQL e bootstrap são executados pelo server.js antes do Express iniciar.
+  return [['run', 'verify']];
 }
 
 function runNpm(args) {
@@ -35,8 +25,8 @@ function main() {
     runNpm(args);
   }
 
-  if (production && String(process.env.ADMIN_PASSWORD || '').trim()) {
-    console.warn('[NM Calçados] primeiro bootstrap concluído/validado. Remova ADMIN_PASSWORD do ambiente antes do próximo redeploy.');
+  if (production) {
+    console.log('[NM Calçados] build validado. Migrations e bootstrap serão executados no runtime antes do Express iniciar.');
   }
 }
 
