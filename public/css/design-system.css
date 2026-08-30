@@ -1,0 +1,375 @@
+:root {
+  --nm-primary-950: #0b1635;
+  --nm-primary-900: #10204d;
+  --nm-primary-800: #17306f;
+  --nm-primary-700: #1d3f91;
+  --nm-primary-600: #2553b8;
+  --nm-primary-500: #3166d5;
+  --nm-primary-100: #e8efff;
+  --nm-primary-50: #f3f6ff;
+
+  --nm-bg: #f5f7fa;
+  --nm-surface: #ffffff;
+  --nm-surface-subtle: #f8fafc;
+  --nm-surface-muted: #f2f4f7;
+  --nm-overlay: rgba(15, 23, 42, .48);
+
+  --nm-text: #182230;
+  --nm-text-secondary: #475467;
+  --nm-text-muted: #667085;
+  --nm-text-faint: #98a2b3;
+  --nm-border: #e4e7ec;
+  --nm-border-strong: #d0d5dd;
+
+  --nm-success: #067647;
+  --nm-success-bg: #ecfdf3;
+  --nm-warning: #b54708;
+  --nm-warning-bg: #fffaeb;
+  --nm-danger: #b42318;
+  --nm-danger-bg: #fef3f2;
+  --nm-info: #175cd3;
+  --nm-info-bg: #eff8ff;
+
+  --nm-font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --nm-font-size-xs: .75rem;
+  --nm-font-size-sm: .8125rem;
+  --nm-font-size-md: .875rem;
+  --nm-font-size-base: 1rem;
+  --nm-font-size-lg: 1.125rem;
+  --nm-font-size-xl: 1.25rem;
+  --nm-font-size-2xl: 1.5rem;
+  --nm-font-size-3xl: 1.875rem;
+  --nm-line-tight: 1.2;
+  --nm-line-normal: 1.5;
+
+  --nm-space-1: .25rem;
+  --nm-space-2: .5rem;
+  --nm-space-3: .75rem;
+  --nm-space-4: 1rem;
+  --nm-space-5: 1.25rem;
+  --nm-space-6: 1.5rem;
+  --nm-space-8: 2rem;
+  --nm-space-10: 2.5rem;
+  --nm-space-12: 3rem;
+
+  --nm-radius-sm: .5rem;
+  --nm-radius-md: .625rem;
+  --nm-radius-lg: .75rem;
+  --nm-radius-xl: 1rem;
+  --nm-radius-pill: 999px;
+
+  --nm-shadow-xs: 0 1px 2px rgba(16, 24, 40, .04);
+  --nm-shadow-sm: 0 2px 8px rgba(16, 24, 40, .06);
+  --nm-shadow-md: 0 10px 30px rgba(16, 24, 40, .09);
+  --nm-shadow-lg: 0 20px 48px rgba(16, 24, 40, .14);
+
+  --nm-control-sm: 2rem;
+  --nm-control-md: 2.5rem;
+  --nm-control-lg: 3rem;
+  --nm-transition: 180ms ease;
+  --nm-focus-ring: 0 0 0 3px rgba(49, 102, 213, .14);
+}
+
+body.nm-admin-shell {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--nm-font-sans);
+  font-size: var(--nm-font-size-md);
+  line-height: var(--nm-line-normal);
+  color: var(--nm-text);
+  background: var(--nm-bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body.nm-admin-shell *,
+body.nm-admin-shell *::before,
+body.nm-admin-shell *::after { box-sizing: border-box; }
+
+body.nm-admin-shell button,
+body.nm-admin-shell input,
+body.nm-admin-shell select,
+body.nm-admin-shell textarea { font: inherit; }
+
+body.nm-admin-shell button,
+body.nm-admin-shell a,
+body.nm-admin-shell input,
+body.nm-admin-shell select,
+body.nm-admin-shell textarea { -webkit-tap-highlight-color: transparent; }
+
+body.nm-admin-shell :focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: var(--nm-focus-ring);
+}
+
+body.nm-admin-shell h1,
+body.nm-admin-shell h2,
+body.nm-admin-shell h3,
+body.nm-admin-shell p { text-wrap: pretty; }
+
+body.nm-admin-shell .muted,
+body.nm-admin-shell .subtitle { color: var(--nm-text-muted); }
+
+/* Shared content surfaces */
+body.nm-admin-shell .admin-card {
+  margin-bottom: var(--nm-space-4);
+  padding: var(--nm-space-5);
+  border: 1px solid var(--nm-border);
+  border-radius: var(--nm-radius-xl);
+  background: var(--nm-surface);
+  box-shadow: var(--nm-shadow-xs);
+}
+
+body.nm-admin-shell .admin-card h2 {
+  margin: 0 0 var(--nm-space-3);
+  color: var(--nm-text);
+  font-size: var(--nm-font-size-base);
+  font-weight: 700;
+  letter-spacing: -.015em;
+}
+
+body.nm-admin-shell .section-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--nm-space-4);
+  margin-bottom: var(--nm-space-4);
+}
+
+body.nm-admin-shell .section-heading h2 { margin-bottom: var(--nm-space-1); }
+body.nm-admin-shell .section-heading .muted { margin: 0; font-size: var(--nm-font-size-sm); }
+
+/* Buttons */
+body.nm-admin-shell .primary-button,
+body.nm-admin-shell .secondary-button,
+body.nm-admin-shell .secondary-link,
+body.nm-admin-shell .text-button,
+body.nm-admin-shell .danger-button,
+body.nm-admin-shell .ghost-button {
+  min-height: var(--nm-control-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--nm-space-2);
+  padding: .5625rem .875rem;
+  border: 1px solid transparent;
+  border-radius: var(--nm-radius-md);
+  text-decoration: none;
+  cursor: pointer;
+  font-size: var(--nm-font-size-sm);
+  font-weight: 650;
+  line-height: 1.2;
+  transition: color var(--nm-transition), background var(--nm-transition), border-color var(--nm-transition), box-shadow var(--nm-transition), transform var(--nm-transition);
+}
+
+body.nm-admin-shell .primary-button {
+  color: #fff;
+  background: var(--nm-primary-700);
+  border-color: var(--nm-primary-700);
+  box-shadow: var(--nm-shadow-xs);
+}
+body.nm-admin-shell .primary-button:hover { background: var(--nm-primary-800); border-color: var(--nm-primary-800); }
+
+body.nm-admin-shell .secondary-button,
+body.nm-admin-shell .secondary-link {
+  color: var(--nm-text-secondary);
+  background: var(--nm-surface);
+  border-color: var(--nm-border-strong);
+  box-shadow: var(--nm-shadow-xs);
+}
+body.nm-admin-shell .secondary-button:hover,
+body.nm-admin-shell .secondary-link:hover { color: var(--nm-text); background: var(--nm-surface-subtle); border-color: #b9c0ca; }
+
+body.nm-admin-shell .text-button,
+body.nm-admin-shell .ghost-button {
+  color: var(--nm-primary-700);
+  background: transparent;
+}
+body.nm-admin-shell .text-button:hover,
+body.nm-admin-shell .ghost-button:hover { background: var(--nm-primary-50); }
+
+body.nm-admin-shell .danger-button,
+body.nm-admin-shell .nm-danger-action {
+  color: var(--nm-danger);
+  background: var(--nm-danger-bg);
+  border-color: #fecdca;
+}
+body.nm-admin-shell .danger-button:hover,
+body.nm-admin-shell .nm-danger-action:hover { background: #fee4e2; border-color: #fda29b; }
+
+body.nm-admin-shell button:disabled,
+body.nm-admin-shell .primary-button:disabled,
+body.nm-admin-shell .secondary-button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Forms */
+body.nm-admin-shell label {
+  color: var(--nm-text-secondary);
+  font-size: var(--nm-font-size-sm);
+  font-weight: 600;
+}
+
+body.nm-admin-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+body.nm-admin-shell select,
+body.nm-admin-shell textarea {
+  width: 100%;
+  min-height: var(--nm-control-md);
+  padding: .5625rem .75rem;
+  border: 1px solid var(--nm-border-strong);
+  border-radius: var(--nm-radius-md);
+  outline: none;
+  color: var(--nm-text);
+  background: var(--nm-surface);
+  box-shadow: var(--nm-shadow-xs);
+  transition: border-color var(--nm-transition), box-shadow var(--nm-transition), background var(--nm-transition);
+}
+
+body.nm-admin-shell textarea { min-height: 6rem; resize: vertical; }
+body.nm-admin-shell input::placeholder,
+body.nm-admin-shell textarea::placeholder { color: var(--nm-text-faint); }
+body.nm-admin-shell input:hover:not(:disabled),
+body.nm-admin-shell select:hover:not(:disabled),
+body.nm-admin-shell textarea:hover:not(:disabled) { border-color: #b8c0cc; }
+body.nm-admin-shell input:focus,
+body.nm-admin-shell select:focus,
+body.nm-admin-shell textarea:focus { border-color: var(--nm-primary-500); box-shadow: var(--nm-focus-ring); }
+body.nm-admin-shell input:disabled,
+body.nm-admin-shell select:disabled,
+body.nm-admin-shell textarea:disabled { color: var(--nm-text-faint); background: var(--nm-surface-muted); cursor: not-allowed; }
+
+body.nm-admin-shell input[type="file"] {
+  width: 100%;
+  min-height: var(--nm-control-md);
+  padding: .5rem;
+  border: 1px dashed var(--nm-border-strong);
+  border-radius: var(--nm-radius-md);
+  color: var(--nm-text-secondary);
+  background: var(--nm-surface-subtle);
+}
+
+body.nm-admin-shell input[type="checkbox"],
+body.nm-admin-shell input[type="radio"] { accent-color: var(--nm-primary-700); }
+
+body.nm-admin-shell .grid-form,
+body.nm-admin-shell .product-form,
+body.nm-admin-shell .compact-form {
+  gap: var(--nm-space-3);
+}
+
+/* Tables */
+body.nm-admin-shell .table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--nm-border);
+  border-radius: var(--nm-radius-lg);
+  background: var(--nm-surface);
+}
+
+body.nm-admin-shell table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--nm-surface);
+}
+
+body.nm-admin-shell th,
+body.nm-admin-shell td {
+  padding: .75rem .875rem;
+  border-bottom: 1px solid var(--nm-border);
+  vertical-align: middle;
+}
+
+body.nm-admin-shell th {
+  color: var(--nm-text-muted);
+  background: var(--nm-surface-subtle);
+  font-size: .6875rem;
+  font-weight: 700;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: .055em;
+  white-space: nowrap;
+}
+
+body.nm-admin-shell td { color: var(--nm-text-secondary); font-size: var(--nm-font-size-sm); }
+body.nm-admin-shell tbody tr:last-child td { border-bottom: 0; }
+body.nm-admin-shell tbody tr { transition: background var(--nm-transition); }
+body.nm-admin-shell tbody tr:hover { background: #fbfcfe; }
+body.nm-admin-shell td.numeric,
+body.nm-admin-shell th.numeric,
+body.nm-admin-shell td.money,
+body.nm-admin-shell th.money { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Status and feedback */
+body.nm-admin-shell .status-badge,
+body.nm-admin-shell [class*="badge"] {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+  min-height: 1.5rem;
+  padding: .1875rem .5rem;
+  border-radius: var(--nm-radius-pill);
+  font-size: .6875rem;
+  font-weight: 650;
+  line-height: 1;
+}
+
+body.nm-admin-shell .feedback {
+  min-height: 1.25rem;
+  margin: var(--nm-space-3) 0 0;
+  color: var(--nm-success);
+  font-size: var(--nm-font-size-sm);
+}
+body.nm-admin-shell .feedback.is-error { color: var(--nm-danger); }
+body.nm-admin-shell .feedback.has-message {
+  padding: .625rem .75rem;
+  border: 1px solid #abefc6;
+  border-radius: var(--nm-radius-md);
+  background: var(--nm-success-bg);
+}
+body.nm-admin-shell .feedback.has-message.is-error { border-color: #fecdca; background: var(--nm-danger-bg); }
+
+/* Dialogs */
+body.nm-admin-shell dialog {
+  color: var(--nm-text);
+}
+body.nm-admin-shell .wide-dialog,
+body.nm-admin-shell .password-dialog {
+  border: 1px solid var(--nm-border);
+  border-radius: var(--nm-radius-xl);
+  background: var(--nm-surface);
+  box-shadow: var(--nm-shadow-lg);
+}
+body.nm-admin-shell dialog::backdrop { background: var(--nm-overlay); backdrop-filter: blur(2px); }
+body.nm-admin-shell .dialog-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--nm-space-2);
+  padding-top: var(--nm-space-3);
+}
+
+/* Utility components used across modules */
+body.nm-admin-shell .pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--nm-space-2);
+  margin-top: var(--nm-space-4);
+}
+
+body.nm-admin-shell .summary-box,
+body.nm-admin-shell .mini-metric,
+body.nm-admin-shell .finance-metric {
+  border: 1px solid var(--nm-border);
+  border-radius: var(--nm-radius-lg);
+  background: var(--nm-surface-subtle);
+}
+
+@media (max-width: 720px) {
+  body.nm-admin-shell .admin-card { padding: var(--nm-space-4); border-radius: var(--nm-radius-lg); }
+  body.nm-admin-shell .section-heading { flex-direction: column; align-items: stretch; }
+  body.nm-admin-shell .dialog-actions { flex-wrap: wrap; }
+  body.nm-admin-shell .dialog-actions > * { flex: 1 1 auto; }
+}
