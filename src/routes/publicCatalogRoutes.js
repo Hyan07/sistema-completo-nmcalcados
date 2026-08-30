@@ -1,10 +1,14 @@
 'use strict';
 const express=require('express');
 const controller=require('../controllers/publicCatalogController');
+const orderController=require('../controllers/publicCatalogOrderController');
 const{catalogRateLimit}=require('../middlewares/catalogRateLimit');
+const{catalogOrderCreateRateLimit,catalogOrderTrackRateLimit}=require('../middlewares/catalogOrderRateLimit');
 const router=express.Router();
 router.use(catalogRateLimit);
 router.get('/meta',controller.metadata);
 router.get('/products',controller.products);
 router.get('/products/:id',controller.product);
+router.post('/orders',catalogOrderCreateRateLimit,orderController.create);
+router.post('/orders/track',catalogOrderTrackRateLimit,orderController.track);
 module.exports=router;

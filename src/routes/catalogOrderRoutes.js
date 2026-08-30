@@ -1,0 +1,13 @@
+'use strict';
+const express=require('express');
+const controller=require('../controllers/catalogOrderController');
+const{authenticate}=require('../middlewares/authenticate');
+const{authorize}=require('../middlewares/authorize');
+const router=express.Router();router.use(authenticate);
+router.get('/',authorize('catalog.orders.read'),controller.list);
+router.get('/:id',authorize('catalog.orders.read'),controller.get);
+router.patch('/:id',authorize('catalog.orders.manage'),controller.update);
+router.post('/:id/confirm',authorize('catalog.orders.manage'),controller.confirm);
+router.post('/:id/cancel',authorize('catalog.orders.manage'),controller.cancel);
+router.post('/:id/convert',authorize('catalog.orders.manage'),authorize('sales.create'),controller.convert);
+module.exports=router;

@@ -4,11 +4,11 @@ ERP/POS monolítico e integrado para a NM Calçados, com backend Node.js/Express
 
 ## Estado atual
 
-**FASE 14 — Catálogo Público concluída.**
+**FASE 15 — Pedidos e Reservas pelo Catálogo concluída.**
 
-O sistema possui autenticação/RBAC, produtos e grade, estoque transacional, clientes, fornecedores/compras, PDV/vendas, caixa, financeiro, dashboard, relatórios e agora catálogo público derivado do mesmo cadastro comercial.
+O sistema possui autenticação/RBAC, produtos e grade, estoque transacional, clientes, fornecedores/compras, PDV/vendas, caixa, financeiro, dashboard, relatórios, catálogo público e agora pedidos online com reserva comercial controlada.
 
-A vitrine publica somente produtos ativos marcados para catálogo, resolve preços com a mesma regra do PDV e expõe disponibilidade por tamanho sem revelar saldo exato, custos, códigos internos ou dados administrativos.
+Pedido público não é venda e reserva não é baixa física. O estoque reservado é protegido contra outras saídas; a baixa `SALE` só ocorre ao finalizar a venda convertida.
 
 ## Execução local
 
@@ -27,6 +27,7 @@ No Windows: `Copy-Item .env.example .env`.
 ## Módulos disponíveis
 
 - Catálogo público: `/catalog/`
+- Pedidos do catálogo: `/pages/catalog-orders.html`
 - Dashboard: `/pages/dashboard.html`
 - Relatórios: `/pages/reports.html`
 - PDV: `/pages/pos.html`
@@ -40,14 +41,14 @@ No Windows: `Copy-Item .env.example .env`.
 - Compras: `/pages/purchases.html`
 - Usuários: `/pages/users.html`
 
-Documentação da fase: `docs/CATALOGO_PUBLICO.md`.
+Documentação da fase: `docs/PEDIDOS_CATALOGO.md`.
 
 ## Banco
 
 Migrations ficam em `src/database/migrations/` e são controladas por `schema_migrations` com checksum. Não altere migrations já aplicadas.
 
-A FASE 14 adiciona `017_public_catalog_phase14.sql`, apenas com índices para consultas públicas de variantes, SKUs e imagens. Produtos/preços/estoque continuam usando as tabelas transacionais existentes.
+A FASE 15 adiciona `018_catalog_orders_phase15.sql`, evoluindo pedidos públicos e criando `stock_reservations` para holds comerciais sem alteração de `stock_balances`.
 
 ## Próxima fase
 
-**FASE 15 — Pedidos e reservas pelo catálogo.**
+**FASE 16 — Importação dos dados reais.**
