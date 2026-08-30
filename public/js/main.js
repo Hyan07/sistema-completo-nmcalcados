@@ -15,6 +15,7 @@ function showSession(user, permissions = []) {
   document.getElementById('session-user').textContent = user.name;
   document.getElementById('session-role').textContent = (user.roles || []).map((role) => role.name).join(' + ') || 'Sem cargo ativo';
   document.getElementById('products-link').hidden = !permissions.includes('products.read');
+  document.getElementById('grade-link').hidden = !permissions.includes('products.read');
   document.getElementById('users-link').hidden = !permissions.includes('users.read');
 }
 function showLogin() { panel.hidden = true; form.hidden = false; }

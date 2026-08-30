@@ -2,12 +2,12 @@
 
 ## Escopo
 
-Esta fase implementa o cadastro administrativo de categorias, marcas, produtos e imagens de produto. Variações por cor, tamanhos, SKUs e saldo de estoque continuam reservados para a FASE 5 e FASE 6.
+A FASE 4 implementa o cadastro administrativo de categorias, marcas, produtos e imagens de produto. A FASE 5 complementa esse módulo com cores, tamanhos, variantes e SKUs, documentados em `GRADE_PRODUTOS.md`.
 
 ## Permissões
 
-- `products.read`: consulta categorias, marcas, produtos e imagens.
-- `products.manage`: cria e altera categorias, marcas, produtos e imagens.
+- `products.read`: consulta categorias, marcas, produtos, imagens e grade.
+- `products.manage`: cria e altera categorias, marcas, produtos, imagens e grade.
 
 A autorização é verificada no backend. A interface apenas adapta os controles visíveis à permissão efetiva do usuário.
 
@@ -15,7 +15,7 @@ A autorização é verificada no backend. A interface apenas adapta os controles
 
 Categorias aceitam relação pai/filho. O backend impede referência ao próprio registro e ciclos na árvore. Uma categoria com produtos ativos ou subcategorias ativas não pode ser desativada até que essas dependências sejam tratadas.
 
-Não existe exclusão física no fluxo administrativo desta fase.
+Não existe exclusão física no fluxo administrativo.
 
 ## Marcas
 
@@ -45,9 +45,9 @@ Os arquivos ficam em `uploads/products/`, fora do Git, e são servidos em `/medi
 
 A primeira imagem vira principal automaticamente; outra imagem pode ser promovida. Ao remover a principal, a próxima imagem disponível é promovida.
 
-Nesta fase as imagens pertencem ao produto. Associação específica a uma variante/cor será tratada junto das variantes na FASE 5.
+A partir da FASE 5, cada imagem também pode ser associada opcionalmente a uma variante/cor usando `product_variant_id`, sem duplicar o arquivo físico.
 
-## Endpoints
+## Endpoints da FASE 4
 
 - `GET /api/categories`
 - `POST /api/categories`
@@ -63,4 +63,4 @@ Nesta fase as imagens pertencem ao produto. Associação específica a uma varia
 - `PATCH /api/products/:id/images/:imageId`
 - `DELETE /api/products/:id/images/:imageId`
 
-Tela administrativa: `/pages/products.html`.
+Tela administrativa: `/pages/products.html`. A grade está em `/pages/grade.html`.
