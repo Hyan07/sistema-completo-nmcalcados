@@ -15,6 +15,7 @@ const purchaseRoutes = require('./purchaseRoutes');
 const saleRoutes = require('./saleRoutes');
 const cashRoutes = require('./cashRoutes');
 const paymentRoutes = require('./paymentRoutes');
+const financeRoutes = require('./financeRoutes');
 
 const router = express.Router();
 router.get('/health', (req, res) => { res.status(200).json({ status: 'ok', application: 'nm-calcados' }); });
@@ -32,4 +33,5 @@ router.use('/purchases', purchaseRoutes);
 router.use('/sales', saleRoutes);
 router.use('/cash', cashRoutes);
 router.use('/payments', paymentRoutes);
+router.use('/finance', financeRoutes);
 module.exports = router;

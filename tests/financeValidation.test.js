@@ -1,0 +1,15 @@
+'use strict';
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { buildEqualInstallments, normalizeCancellation, normalizeDateRange, normalizeFinancialCategory, normalizeFinancialization, normalizeManualPayable, normalizeManualReceivable, normalizeSettlement, normalizeSourceType, normalizeStatusFilter } = require('../src/utils/financeValidation');
+test('normaliza conta a receber manual sem perder centavos',()=>{const row=normalizeManualReceivable({description:'Receita eventual',dueDate:'2026-09-10',amount:'123,45',operationKey:'manual-rec:1234567890'});assert.equal(row.amount,'123.45');assert.equal(row.dueDate,'2026-09-10');});
+test('normaliza conta a pagar manual',()=>{const row=normalizeManualPayable({supplierId:2,description:'Energia elétrica',dueDate:'2026-09-15',amount:'999.9',operationKey:'manual-pay:1234567890'});assert.equal(row.supplierId,2);assert.equal(row.amount,'999.90');});
+test('rejeita data impossível',()=>assert.throws(()=>normalizeManualReceivable({description:'Teste',dueDate:'2026-02-30',amount:'1.00',operationKey:'manual-rec:1234567890'})));
+test('normaliza liquidação parcial',()=>{const row=normalizeSettlement({paymentMethodId:3,amount:'50',operationKey:'settlement:1234567890'});assert.equal(row.paymentMethodId,3);assert.equal(row.amount,'50.00');assert.equal(row.cashSessionId,null);});
+test('financeirização preserva parcelas informadas',()=>{const row=normalizeFinancialization({operationKey:'purchase-fin:123456',installments:[{dueDate:'2026-09-30',amount:'50.01'},{dueDate:'2026-10-30',amount:'49.99'}]});assert.deepEqual(row.installments.map(i=>i.amount),['50.01','49.99']);});
+test('parcelamento igual distribui diferença de centavo',()=>{const rows=buildEqualInstallments('100.00',3,'2026-08-31');assert.deepEqual(rows.map(r=>r.amount),['33.34','33.33','33.33']);assert.deepEqual(rows.map(r=>r.dueDate),['2026-08-31','2026-09-30','2026-10-31']);});
+test('categoria financeira normaliza código e tipo',()=>{const row=normalizeFinancialCategory({type:'expense',code:' aluguel ',name:'Aluguel'});assert.equal(row.type,'EXPENSE');assert.equal(row.code,'ALUGUEL');});
+test('rejeita categoria com tipo inválido',()=>assert.throws(()=>normalizeFinancialCategory({type:'ASSET',code:'TESTE',name:'Teste'})));
+test('normaliza filtros de status e origem',()=>{assert.equal(normalizeStatusFilter('partial'),'PARTIAL');assert.equal(normalizeSourceType('purchase'),'PURCHASE');});
+test('rejeita intervalo de datas invertido',()=>assert.throws(()=>normalizeDateRange({dateFrom:'2026-09-10',dateTo:'2026-09-01'})));
+test('cancelamento exige motivo suficiente',()=>{assert.throws(()=>normalizeCancellation({reason:'x',operationKey:'reversal:123456789'}));assert.equal(normalizeCancellation({reason:'Correção de lançamento',operationKey:'reversal:123456789'}).reason,'Correção de lançamento');});

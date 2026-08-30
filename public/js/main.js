@@ -7,6 +7,7 @@ function showSession(user,permissions=[]){
   document.getElementById('session-role').textContent=(user.roles||[]).map(r=>r.name).join(' + ')||'Sem cargo ativo';
   document.getElementById('pos-link').hidden=!permissions.includes('sales.read');
   document.getElementById('cash-link').hidden=!permissions.includes('cash.read');
+  document.getElementById('finance-link').hidden=!permissions.includes('finance.read');
   document.getElementById('products-link').hidden=!permissions.includes('products.read');
   document.getElementById('grade-link').hidden=!permissions.includes('products.read');
   document.getElementById('stock-link').hidden=!permissions.includes('stock.read');

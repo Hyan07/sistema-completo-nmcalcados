@@ -4,11 +4,11 @@ ERP/POS monolítico e integrado para a NM Calçados, com backend Node.js/Express
 
 ## Estado atual
 
-**FASE 10 — Caixa e formas de pagamento concluída.**
+**FASE 11 — Financeiro concluída.**
 
-O sistema já possui autenticação/RBAC, produtos e grade, estoque transacional, clientes, fornecedores/compras, PDV/vendas e agora caixa com abertura/fechamento, suprimento/sangria e pagamentos por dinheiro, PIX, débito e crédito parcelado.
+O sistema possui autenticação/RBAC, produtos e grade, estoque transacional, clientes, fornecedores/compras, PDV/vendas, caixa e agora contas a receber/pagar com liquidação parcial, estornos, receitas/despesas manuais, financeirização de compras e fluxo financeiro.
 
-Venda, alocação de pagamento e recebimento são fatos separados. Dinheiro/PIX geram recebimento imediato; cartões geram recebíveis para liquidação posterior. O fechamento do caixa físico considera somente numerário.
+Venda continua separada de recebimento; compra continua separada de pagamento. Movimentações financeiras são rastreáveis e correções usam estorno, sem apagar ledgers históricos.
 
 ## Execução local
 
@@ -28,6 +28,7 @@ No Windows: `Copy-Item .env.example .env`.
 
 - PDV: `/pages/pos.html`
 - Caixa: `/pages/cash.html`
+- Financeiro: `/pages/finance.html`
 - Produtos: `/pages/products.html`
 - Grade: `/pages/grade.html`
 - Estoque: `/pages/stock.html`
@@ -36,14 +37,14 @@ No Windows: `Copy-Item .env.example .env`.
 - Compras: `/pages/purchases.html`
 - Usuários: `/pages/users.html`
 
-Documentação da fase: `docs/CAIXA_PAGAMENTOS.md`.
+Documentação da fase: `docs/FINANCEIRO.md`.
 
 ## Banco
 
 Migrations ficam em `src/database/migrations/` e são controladas por `schema_migrations` com checksum. Não altere migrations já aplicadas.
 
-A FASE 10 adiciona `013_cash_payments_phase10.sql`, com lotes idempotentes de pagamento, formas padrão, chaves de operação em caixa/recebimentos, novos tipos de movimento e proteção de imutabilidade dos ledgers.
+A FASE 11 adiciona `014_finance_phase11.sql`, com idempotência em obrigações/liquidações, financeirização de compras, transferência bancária, tipos de caixa para financeiro e proteção das alocações de desembolso.
 
 ## Próxima fase
 
-**FASE 11 — Financeiro.**
+**FASE 12 — Dashboard.**
