@@ -1,0 +1,14 @@
+'use strict';
+const express = require('express');
+const controller = require('../controllers/importController');
+const { authenticate } = require('../middlewares/authenticate');
+const { authorize } = require('../middlewares/authorize');
+const { importCsvUpload } = require('../middlewares/importUpload');
+const router = express.Router();
+router.use(authenticate);
+router.get('/templates/:type', authorize('imports.read'), controller.template);
+router.get('/', authorize('imports.read'), controller.list);
+router.get('/:id', authorize('imports.read'), controller.get);
+router.post('/validate', authorize('imports.manage'), importCsvUpload, controller.validate);
+router.post('/:id/apply', authorize('imports.manage'), importCsvUpload, controller.apply);
+module.exports = router;

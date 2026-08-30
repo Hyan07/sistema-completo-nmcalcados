@@ -4,11 +4,11 @@ ERP/POS monolítico e integrado para a NM Calçados, com backend Node.js/Express
 
 ## Estado atual
 
-**FASE 15 — Pedidos e Reservas pelo Catálogo concluída.**
+**FASE 16 — Importação dos dados reais concluída no código.**
 
-O sistema possui autenticação/RBAC, produtos e grade, estoque transacional, clientes, fornecedores/compras, PDV/vendas, caixa, financeiro, dashboard, relatórios, catálogo público e agora pedidos online com reserva comercial controlada.
+O sistema possui autenticação/RBAC, produtos e grade, estoque transacional, clientes, fornecedores/compras, PDV/vendas, caixa, financeiro, dashboard, relatórios, catálogo público, pedidos/reservas e agora uma esteira segura de importação CSV com dry-run, idempotência e aplicação transacional.
 
-Pedido público não é venda e reserva não é baixa física. O estoque reservado é protegido contra outras saídas; a baixa `SALE` só ocorre ao finalizar a venda convertida.
+A carga real não inventa dados: os arquivos efetivos da loja ainda precisam ser fornecidos e validados no ambiente de implantação.
 
 ## Execução local
 
@@ -28,6 +28,7 @@ No Windows: `Copy-Item .env.example .env`.
 
 - Catálogo público: `/catalog/`
 - Pedidos do catálogo: `/pages/catalog-orders.html`
+- Importações: `/pages/imports.html`
 - Dashboard: `/pages/dashboard.html`
 - Relatórios: `/pages/reports.html`
 - PDV: `/pages/pos.html`
@@ -41,14 +42,14 @@ No Windows: `Copy-Item .env.example .env`.
 - Compras: `/pages/purchases.html`
 - Usuários: `/pages/users.html`
 
-Documentação da fase: `docs/PEDIDOS_CATALOGO.md`.
+Documentação da fase: `docs/IMPORTACAO_DADOS.md`.
 
 ## Banco
 
 Migrations ficam em `src/database/migrations/` e são controladas por `schema_migrations` com checksum. Não altere migrations já aplicadas.
 
-A FASE 15 adiciona `018_catalog_orders_phase15.sql`, evoluindo pedidos públicos e criando `stock_reservations` para holds comerciais sem alteração de `stock_balances`.
+A FASE 16 adiciona `019_data_import_phase16.sql`, criando somente metadados de lotes/idempotência e permissões. O conteúdo bruto dos CSVs não é persistido em staging.
 
 ## Próxima fase
 
-**FASE 16 — Importação dos dados reais.**
+**FASE 17 — Auditoria completa do sistema.**

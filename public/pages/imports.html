@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>NM Calçados | Importação de dados</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/imports.css">
+</head>
+<body>
+<main class="admin-shell imports-shell">
+  <header class="admin-header">
+    <div><p class="eyebrow">NM Calçados</p><h1>Importação dos dados reais</h1><p class="muted">Valide primeiro. A aplicação só é liberada quando o arquivo inteiro estiver consistente.</p></div>
+    <a class="secondary-link" href="/">Voltar</a>
+  </header>
+
+  <section class="admin-card import-warning">
+    <strong>Fluxo seguro</strong>
+    <p>Use os modelos oficiais em CSV UTF-8. A importação é create-only: registros existentes não são sobrescritos. O saldo inicial sempre gera movimentação de estoque.</p>
+  </section>
+
+  <section class="admin-card" id="import-workspace">
+    <div class="section-heading"><div><h2>Novo lote</h2><p class="muted">O mesmo arquivo validado deve ser usado na aplicação.</p></div></div>
+    <div class="import-grid">
+      <label>Tipo
+        <select id="import-type">
+          <option value="catalog">Catálogo / produtos e grade</option>
+          <option value="customers">Clientes</option>
+          <option value="suppliers">Fornecedores</option>
+          <option value="opening_stock">Saldo inicial de estoque</option>
+        </select>
+      </label>
+      <label>Arquivo CSV<input id="import-file" type="file" accept=".csv,text/csv" required></label>
+      <div class="template-box"><span>Modelo oficial</span><a id="template-link" class="secondary-link" href="/api/imports/templates/catalog">Baixar CSV</a></div>
+    </div>
+    <div class="import-actions"><button id="validate-button" class="primary-button" type="button">1. Validar arquivo</button><span id="selected-file" class="muted"></span></div>
+    <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+  </section>
+
+  <section class="admin-card" id="validation-panel" hidden>
+    <div class="section-heading"><div><h2>Resultado da validação</h2><p id="validation-title" class="muted"></p></div><span id="validation-status" class="import-status"></span></div>
+    <div id="validation-summary" class="summary-grid"></div>
+    <div id="error-panel" hidden><h3>Inconsistências</h3><div class="table-wrap"><table><thead><tr><th>Linha</th><th>Código</th><th>Problema</th></tr></thead><tbody id="error-body"></tbody></table></div><p id="error-truncated" class="muted"></p></div>
+    <div id="apply-panel" class="apply-panel" hidden>
+      <h3>Aplicar lote validado</h3>
+      <p>Esta etapa grava os dados no banco. Para confirmar, digite <strong>IMPORTAR</strong>.</p>
+      <label>Confirmação<input id="apply-confirmation" autocomplete="off" placeholder="IMPORTAR"></label>
+      <button id="apply-button" class="primary-button" type="button">2. Aplicar importação</button>
+    </div>
+  </section>
+
+  <section class="admin-card">
+    <div class="section-heading"><div><h2>Histórico de lotes</h2><p class="muted">Metadados, contagens e resultados. O conteúdo bruto das planilhas não é armazenado aqui.</p></div><button id="refresh-button" class="secondary-button" type="button">Atualizar</button></div>
+    <div class="table-wrap"><table><thead><tr><th>ID</th><th>Tipo</th><th>Arquivo</th><th>Status</th><th>Linhas</th><th>Válidas</th><th>Inválidas</th><th>Criado por</th><th>Data</th></tr></thead><tbody id="batch-body"></tbody></table></div>
+  </section>
+</main>
+<script src="/js/imports.js" defer></script>
+</body>
+</html>

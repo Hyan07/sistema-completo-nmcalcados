@@ -1,0 +1,12 @@
+'use strict';
+const test=require('node:test');const assert=require('node:assert/strict');
+const {parseCsv}=require('../src/utils/importCsv');
+const {ensureUniqueRows,hashBuffer,normalizeImportType,normalizeOperationKey,normalizeRows,parseImportBoolean,parseImportMoney}=require('../src/utils/importValidation');
+test('normaliza dinheiro brasileiro e internacional',()=>{assert.equal(parseImportMoney('R$ 1.234,56','Valor'),'1234.56');assert.equal(parseImportMoney('1234.56','Valor'),'1234.56');});
+test('normaliza booleanos de planilha',()=>{assert.equal(parseImportBoolean('SIM'),true);assert.equal(parseImportBoolean('não'),false);});
+test('valida tipo e chave idempotente',()=>{assert.equal(normalizeImportType('opening_stock'),'opening_stock');assert.equal(normalizeOperationKey('importacao:1234567890'),'importacao:1234567890');assert.throws(()=>normalizeOperationKey('curta'));});
+test('hash do arquivo é determinístico',()=>assert.equal(hashBuffer(Buffer.from('abc')),hashBuffer(Buffer.from('abc'))));
+test('normaliza linha de saldo inicial',()=>{const p=parseCsv(Buffer.from('sku;quantity;reason\nABC-38;12;Implantação\n'));const n=normalizeRows('opening_stock',p);assert.equal(n.errors.length,0);assert.equal(n.valid[0].quantity,12);});
+test('normaliza catálogo por SKU',()=>{const p=parseCsv(Buffer.from('internal_code;name;color;size;sku;base_sale_price\nP1;Produto;Preto;38;P1-38;199,90\n'));const n=normalizeRows('catalog',p);assert.equal(n.errors.length,0);assert.equal(n.valid[0].product.baseSalePrice,'199.90');assert.equal(n.valid[0].sku.sku,'P1-38');});
+test('detecta combinação de grade duplicada',()=>{const p=parseCsv(Buffer.from('internal_code;name;color;size;sku;base_sale_price\nP1;Produto;Preto;38;P1-A;100\nP1;Produto;Preto;38;P1-B;100\n'));const n=normalizeRows('catalog',p);const errors=[];ensureUniqueRows('catalog',n.valid,errors);assert.ok(errors.some(e=>e.code==='IMPORT_DUPLICATE_IN_FILE'));});
+test('detecta produto inconsistente em linhas diferentes',()=>{const p=parseCsv(Buffer.from('internal_code;name;color;size;sku;base_sale_price\nP1;Produto;Preto;38;P1-38;100\nP1;Produto;Preto;39;P1-39;110\n'));const n=normalizeRows('catalog',p);const errors=[];ensureUniqueRows('catalog',n.valid,errors);assert.ok(errors.some(e=>e.code==='IMPORT_PRODUCT_INCONSISTENT'));});
