@@ -99,6 +99,7 @@ async function runMigrations() {
     }
 
     console.log(`Migrations concluídas. Novas migrations aplicadas: ${appliedCount}.`);
+    return { appliedCount };
   } finally {
     if (lockAcquired) {
       try {
@@ -112,7 +113,11 @@ async function runMigrations() {
   }
 }
 
-runMigrations().catch((error) => {
-  console.error('Falha ao executar migrations:', error.message);
-  process.exitCode = 1;
-});
+if (require.main === module) {
+  runMigrations().catch((error) => {
+    console.error('Falha ao executar migrations:', error.message);
+    process.exitCode = 1;
+  });
+}
+
+module.exports = { runMigrations };

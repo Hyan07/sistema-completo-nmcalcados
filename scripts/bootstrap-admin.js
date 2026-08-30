@@ -5,7 +5,7 @@ const { env } = require('../src/config/env');
 const { closePool, getPool } = require('../src/config/database');
 const { normalizeEmail, normalizeUsername, validateEmail, validateName, validatePassword, validateUsername } = require('../src/utils/authValidation');
 
-async function main() {
+async function bootstrapAdmin() {
   const name = String(process.env.ADMIN_NAME || '').trim();
   const username = normalizeUsername(process.env.ADMIN_USERNAME);
   const email = normalizeEmail(process.env.ADMIN_EMAIL);
@@ -30,7 +30,7 @@ async function main() {
       if (!assignmentRows[0]) throw new Error('O username informado já pertence a um usuário que não possui o cargo de administrador.');
       console.log('Administrador já existe. Nenhuma alteração realizada.');
       await connection.rollback();
-      return;
+      return { created: false, userId: existingRows[0].id };
     }
 
     const [countRows] = await connection.query('SELECT COUNT(*) AS total FROM users');
@@ -44,6 +44,7 @@ async function main() {
     await connection.execute('INSERT INTO user_roles (user_id, role_id, assigned_by_user_id) VALUES (?, ?, NULL)', [result.insertId, roleRows[0].id]);
     await connection.commit();
     console.log('Primeiro administrador criado com sucesso. Remova ADMIN_PASSWORD do ambiente após o bootstrap.');
+    return { created: true, userId: result.insertId };
   } catch (error) {
     await connection.rollback();
     throw error;
@@ -52,6 +53,10 @@ async function main() {
   }
 }
 
-main()
-  .catch((error) => { console.error('Falha ao criar administrador inicial:', error.message); process.exitCode = 1; })
-  .finally(async () => { await closePool(); });
+if (require.main === module) {
+  bootstrapAdmin()
+    .catch((error) => { console.error('Falha ao criar administrador inicial:', error.message); process.exitCode = 1; })
+    .finally(async () => { await closePool(); });
+}
+
+module.exports = { bootstrapAdmin };
