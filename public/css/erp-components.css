@@ -1,0 +1,512 @@
+/* NM Calçados — componentes compartilhados do ERP.
+   Esta camada trabalha sobre design-system.css e não contém regras de negócio. */
+
+body.nm-admin-shell .admin-header,
+body.nm-admin-shell .dashboard-page-header {
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:var(--nm-space-5);
+  margin:0 0 var(--nm-space-5);
+}
+body.nm-admin-shell .admin-header > div:first-child,
+body.nm-admin-shell .dashboard-page-header > div:first-child { min-width:0; }
+body.nm-admin-shell .admin-header .eyebrow,
+body.nm-admin-shell .dashboard-page-header .eyebrow {
+  margin:0 0 .375rem;
+  color:var(--nm-primary-700);
+  font-size:.6875rem;
+  font-weight:750;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+body.nm-admin-shell .admin-header h1,
+body.nm-admin-shell .dashboard-page-header h1 {
+  margin:0;
+  color:var(--nm-text);
+  font-size:clamp(1.55rem,2.2vw,2.15rem);
+  line-height:1.08;
+  letter-spacing:-.035em;
+}
+body.nm-admin-shell .admin-header .muted,
+body.nm-admin-shell .dashboard-page-header .subtitle {
+  max-width:760px;
+  margin:.5rem 0 0;
+  color:var(--nm-text-muted);
+  font-size:var(--nm-font-size-sm);
+}
+body.nm-admin-shell .header-actions,
+body.nm-admin-shell .session-actions,
+body.nm-admin-shell .page-actions {
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:var(--nm-space-2);
+  flex-wrap:wrap;
+}
+
+/* Barras de filtros e ações */
+body.nm-admin-shell .filter-bar,
+body.nm-admin-shell .report-filters,
+body.nm-admin-shell .dashboard-filter {
+  display:grid;
+  grid-template-columns:minmax(220px,2fr) repeat(auto-fit,minmax(140px,1fr));
+  align-items:end;
+  gap:var(--nm-space-2);
+}
+body.nm-admin-shell .filter-bar > label,
+body.nm-admin-shell .report-filters > label,
+body.nm-admin-shell .dashboard-filter > label,
+body.nm-admin-shell .stack-form > label,
+body.nm-admin-shell .compact-form > label,
+body.nm-admin-shell .grid-form > label,
+body.nm-admin-shell .product-form > label,
+body.nm-admin-shell .customer-form > label,
+body.nm-admin-shell .supplier-form > label,
+body.nm-admin-shell .purchase-form > label,
+body.nm-admin-shell .cash-actions > label {
+  display:grid;
+  gap:.375rem;
+}
+body.nm-admin-shell .filter-bar label:has(input[type="checkbox"]) {
+  min-height:var(--nm-control-md);
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  padding:.5rem .75rem;
+  border:1px solid var(--nm-border);
+  border-radius:var(--nm-radius-md);
+  background:var(--nm-surface-subtle);
+  white-space:nowrap;
+}
+body.nm-admin-shell .filter-bar label:has(input[type="checkbox"]) input { margin:0; }
+body.nm-admin-shell .nm-filter-shell {
+  margin-bottom:var(--nm-space-4);
+  padding:var(--nm-space-3);
+  border:1px solid var(--nm-border);
+  border-radius:var(--nm-radius-lg);
+  background:var(--nm-surface-subtle);
+}
+body.nm-admin-shell .nm-filter-shell .filter-bar { margin:0; }
+body.nm-admin-shell .nm-filter-toggle { display:none; }
+
+/* Formulários */
+body.nm-admin-shell .grid-form,
+body.nm-admin-shell .product-form,
+body.nm-admin-shell .customer-form,
+body.nm-admin-shell .supplier-form,
+body.nm-admin-shell .purchase-form {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:var(--nm-space-3);
+  align-items:end;
+}
+body.nm-admin-shell .compact-form,
+body.nm-admin-shell .cash-actions,
+body.nm-admin-shell .item-search-row,
+body.nm-admin-shell .import-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:var(--nm-space-3);
+  align-items:end;
+}
+body.nm-admin-shell .stack-form { display:grid; gap:var(--nm-space-3); }
+body.nm-admin-shell .wide-field,
+body.nm-admin-shell .span-all { grid-column:1 / -1; }
+body.nm-admin-shell .span-2 { grid-column:span 2; }
+body.nm-admin-shell form small {
+  color:var(--nm-text-muted);
+  font-size:var(--nm-font-size-xs);
+  line-height:1.45;
+}
+body.nm-admin-shell form h3 {
+  grid-column:1 / -1;
+  margin:.25rem 0 0;
+  color:var(--nm-text-secondary);
+  font-size:var(--nm-font-size-sm);
+}
+body.nm-admin-shell .form-section {
+  grid-column:1 / -1;
+  padding-top:var(--nm-space-3);
+  border-top:1px solid var(--nm-border);
+}
+body.nm-admin-shell .form-section:first-child { padding-top:0; border-top:0; }
+body.nm-admin-shell .form-section-title {
+  margin:0 0 var(--nm-space-3);
+  color:var(--nm-text);
+  font-size:var(--nm-font-size-sm);
+  font-weight:700;
+}
+body.nm-admin-shell .check-field {
+  min-height:var(--nm-control-md);
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  gap:.5rem!important;
+  padding:.5rem .75rem;
+  border:1px solid var(--nm-border);
+  border-radius:var(--nm-radius-md);
+  background:var(--nm-surface-subtle);
+}
+body.nm-admin-shell .check-field input { width:auto!important; margin:0; }
+
+/* KPIs */
+body.nm-admin-shell .nm-stat-grid,
+body.nm-admin-shell .stock-summary,
+body.nm-admin-shell .finance-summary,
+body.nm-admin-shell .cash-summary,
+body.nm-admin-shell .report-summary,
+body.nm-admin-shell .summary-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+  gap:var(--nm-space-3);
+}
+body.nm-admin-shell .nm-stat-card,
+body.nm-admin-shell .stock-summary > article,
+body.nm-admin-shell .finance-summary > article,
+body.nm-admin-shell .cash-summary > div,
+body.nm-admin-shell .report-summary > article,
+body.nm-admin-shell .summary-grid > * {
+  min-height:108px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  gap:.5rem;
+  padding:var(--nm-space-4);
+  border:1px solid var(--nm-border);
+  border-radius:var(--nm-radius-xl);
+  background:var(--nm-surface);
+  box-shadow:var(--nm-shadow-xs);
+}
+body.nm-admin-shell .nm-stat-card span,
+body.nm-admin-shell .stock-summary > article > span,
+body.nm-admin-shell .finance-summary > article > small,
+body.nm-admin-shell .cash-summary > div,
+body.nm-admin-shell .summary-grid small {
+  color:var(--nm-text-muted);
+  font-size:var(--nm-font-size-xs);
+  font-weight:650;
+}
+body.nm-admin-shell .nm-stat-card strong,
+body.nm-admin-shell .stock-summary > article > strong,
+body.nm-admin-shell .finance-summary > article > strong,
+body.nm-admin-shell .cash-summary > div > strong,
+body.nm-admin-shell .summary-grid strong {
+  color:var(--nm-text);
+  font-size:clamp(1.25rem,1.8vw,1.65rem);
+  font-weight:750;
+  letter-spacing:-.025em;
+  font-variant-numeric:tabular-nums;
+}
+body.nm-admin-shell .nm-stat-card.is-danger,
+body.nm-admin-shell .stock-summary > article:nth-child(3) { border-color:#fecdca; background:var(--nm-danger-bg); }
+body.nm-admin-shell .nm-stat-card.is-warning,
+body.nm-admin-shell .stock-summary > article:nth-child(4) { border-color:#fedf89; background:var(--nm-warning-bg); }
+
+/* Tabelas e toolbar */
+body.nm-admin-shell .nm-table-card { padding:0; overflow:hidden; }
+body.nm-admin-shell .nm-table-card > .section-heading,
+body.nm-admin-shell .nm-table-card > .nm-filter-shell,
+body.nm-admin-shell .nm-table-card > .pagination,
+body.nm-admin-shell .nm-table-card > .feedback { margin-left:var(--nm-space-5); margin-right:var(--nm-space-5); }
+body.nm-admin-shell .nm-table-card > .table-wrap { border-left:0; border-right:0; border-radius:0; }
+body.nm-admin-shell .actions { display:flex; align-items:center; justify-content:flex-end; gap:.25rem; flex-wrap:wrap; }
+body.nm-admin-shell .actions .text-button,
+body.nm-admin-shell td:last-child > .text-button {
+  min-height:2rem;
+  padding:.35rem .55rem;
+  border-radius:var(--nm-radius-sm);
+  font-size:.75rem;
+}
+body.nm-admin-shell .table-input { min-height:2.125rem!important; padding:.375rem .5rem!important; font-size:.75rem!important; }
+body.nm-admin-shell .product-cell { display:flex; align-items:center; gap:.75rem; min-width:210px; }
+body.nm-admin-shell .product-cell img,
+body.nm-admin-shell .image-placeholder {
+  width:42px;
+  height:42px;
+  flex:0 0 42px;
+  display:grid;
+  place-items:center;
+  object-fit:cover;
+  border:1px solid var(--nm-border);
+  border-radius:var(--nm-radius-md);
+  background:var(--nm-surface-muted);
+  color:var(--nm-primary-700);
+  font-size:.6875rem;
+  font-weight:800;
+}
+body.nm-admin-shell .product-cell > div { display:grid; gap:.125rem; }
+body.nm-admin-shell .product-cell strong { color:var(--nm-text); font-size:.8125rem; }
+body.nm-admin-shell .product-cell small { color:var(--nm-text-muted); font-size:.6875rem; }
+body.nm-admin-shell .pagination { padding-bottom:.25rem; }
+body.nm-admin-shell .pagination > span { min-width:9rem; text-align:center; font-size:var(--nm-font-size-xs); }
+
+/* Badges semânticos */
+body.nm-admin-shell .nm-badge,
+body.nm-admin-shell .status-badge,
+body.nm-admin-shell .import-status {
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  width:max-content;
+  min-height:1.5rem;
+  padding:.2rem .5rem;
+  border:1px solid var(--nm-border);
+  border-radius:var(--nm-radius-pill);
+  color:var(--nm-text-secondary);
+  background:var(--nm-surface-subtle);
+  font-size:.6875rem;
+  font-weight:700;
+}
+body.nm-admin-shell .nm-badge::before,
+body.nm-admin-shell .status-badge::before {
+  content:"";
+  width:.375rem;
+  height:.375rem;
+  border-radius:50%;
+  background:currentColor;
+  opacity:.7;
+}
+body.nm-admin-shell .nm-badge.is-success { color:var(--nm-success); border-color:#abefc6; background:var(--nm-success-bg); }
+body.nm-admin-shell .nm-badge.is-warning { color:var(--nm-warning); border-color:#fedf89; background:var(--nm-warning-bg); }
+body.nm-admin-shell .nm-badge.is-danger { color:var(--nm-danger); border-color:#fecdca; background:var(--nm-danger-bg); }
+body.nm-admin-shell .nm-badge.is-info { color:var(--nm-info); border-color:#b2ddff; background:var(--nm-info-bg); }
+
+/* Empty, loading e feedback */
+#nm-network-bar {
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:10000;
+  width:0;
+  height:3px;
+  opacity:0;
+  background:var(--nm-primary-500);
+  box-shadow:0 0 12px rgba(49,102,213,.35);
+  transition:width 220ms ease,opacity 180ms ease;
+}
+#nm-network-bar.is-active { width:72%; opacity:1; }
+#nm-network-bar.is-finishing { width:100%; opacity:0; }
+body.nm-admin-shell .nm-empty-row td { padding:0!important; }
+body.nm-admin-shell .nm-empty-state {
+  min-height:160px;
+  display:grid;
+  place-items:center;
+  gap:.375rem;
+  padding:var(--nm-space-8) var(--nm-space-4);
+  color:var(--nm-text-muted);
+  text-align:center;
+}
+body.nm-admin-shell .nm-empty-state strong { color:var(--nm-text); font-size:var(--nm-font-size-sm); }
+body.nm-admin-shell .nm-empty-state p { max-width:420px; margin:0; font-size:var(--nm-font-size-xs); }
+body.nm-admin-shell .nm-empty-icon {
+  width:40px;
+  height:40px;
+  display:grid;
+  place-items:center;
+  margin-bottom:.25rem;
+  border-radius:50%;
+  color:var(--nm-primary-700);
+  background:var(--nm-primary-50);
+  font-weight:800;
+}
+body.nm-admin-shell .nm-skeleton {
+  position:relative;
+  overflow:hidden;
+  min-height:1rem;
+  border-radius:var(--nm-radius-sm);
+  background:var(--nm-surface-muted);
+}
+body.nm-admin-shell .nm-skeleton::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  transform:translateX(-100%);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);
+  animation:nm-shimmer 1.25s infinite;
+}
+@keyframes nm-shimmer { 100% { transform:translateX(100%); } }
+
+/* Toasts */
+#nm-toast-region {
+  position:fixed;
+  z-index:9999;
+  right:1rem;
+  bottom:1rem;
+  width:min(380px,calc(100vw - 2rem));
+  display:grid;
+  gap:.5rem;
+  pointer-events:none;
+}
+.nm-toast {
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:start;
+  gap:.65rem;
+  padding:.8rem .9rem;
+  border:1px solid var(--nm-border);
+  border-radius:var(--nm-radius-lg);
+  background:rgba(255,255,255,.98);
+  color:var(--nm-text-secondary);
+  box-shadow:var(--nm-shadow-md);
+  pointer-events:auto;
+  animation:nm-toast-in 180ms ease both;
+}
+.nm-toast > i { width:.55rem; height:.55rem; margin-top:.35rem; border-radius:50%; background:var(--nm-info); }
+.nm-toast strong { display:block; margin-bottom:.125rem; color:var(--nm-text); font-size:.8125rem; }
+.nm-toast span { font-size:.75rem; line-height:1.45; }
+.nm-toast button { padding:.15rem; color:var(--nm-text-faint); background:transparent; cursor:pointer; }
+.nm-toast.is-success > i { background:var(--nm-success); }
+.nm-toast.is-error > i { background:var(--nm-danger); }
+.nm-toast.is-warning > i { background:var(--nm-warning); }
+@keyframes nm-toast-in { from { opacity:0; transform:translateY(8px); } }
+
+/* Lookup, cards e diálogos */
+body.nm-admin-shell .lookup-list:not(:empty) {
+  margin-top:.375rem;
+  padding:.375rem;
+  border:1px solid var(--nm-border);
+  border-radius:var(--nm-radius-lg);
+  background:var(--nm-surface);
+  box-shadow:var(--nm-shadow-md);
+}
+body.nm-admin-shell .wide-dialog,
+body.nm-admin-shell .purchase-dialog,
+body.nm-admin-shell .customer-dialog {
+  width:min(94vw,1080px);
+  max-height:92vh;
+  overflow:auto;
+  padding:var(--nm-space-5);
+}
+body.nm-admin-shell .password-dialog { width:min(92vw,440px); padding:var(--nm-space-5); }
+body.nm-admin-shell .wide-dialog > form,
+body.nm-admin-shell .purchase-dialog > div { margin:0; }
+body.nm-admin-shell hr { border:0; border-top:1px solid var(--nm-border); margin:var(--nm-space-5) 0; }
+
+/* Painéis operacionais */
+body.nm-admin-shell .nm-operational-grid,
+body.nm-admin-shell .catalog-grid,
+body.nm-admin-shell .grade-master-grid,
+body.nm-admin-shell .movement-grid,
+body.nm-admin-shell .finance-grid,
+body.nm-admin-shell .cash-grid,
+body.nm-admin-shell .detail-grid,
+body.nm-admin-shell .history-grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:var(--nm-space-4);
+}
+body.nm-admin-shell .detail-box,
+body.nm-admin-shell .item-builder,
+body.nm-admin-shell .template-box,
+body.nm-admin-shell .apply-panel {
+  padding:var(--nm-space-4);
+  border:1px solid var(--nm-border);
+  border-radius:var(--nm-radius-lg);
+  background:var(--nm-surface-subtle);
+}
+
+/* Responsividade real */
+@media (max-width:1100px) {
+  body.nm-admin-shell .grid-form,
+  body.nm-admin-shell .product-form,
+  body.nm-admin-shell .customer-form,
+  body.nm-admin-shell .supplier-form,
+  body.nm-admin-shell .purchase-form { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media (max-width:780px) {
+  body.nm-admin-shell .admin-header,
+  body.nm-admin-shell .dashboard-page-header { align-items:flex-start; flex-direction:column; }
+  body.nm-admin-shell .admin-header .header-actions,
+  body.nm-admin-shell .admin-header .session-actions,
+  body.nm-admin-shell .page-actions { width:100%; justify-content:flex-start; }
+  body.nm-admin-shell .filter-bar,
+  body.nm-admin-shell .report-filters,
+  body.nm-admin-shell .dashboard-filter { grid-template-columns:1fr 1fr; }
+  body.nm-admin-shell .filter-bar > input:first-child,
+  body.nm-admin-shell .report-filters > label:first-child { grid-column:1 / -1; }
+  body.nm-admin-shell .nm-operational-grid,
+  body.nm-admin-shell .catalog-grid,
+  body.nm-admin-shell .grade-master-grid,
+  body.nm-admin-shell .movement-grid,
+  body.nm-admin-shell .finance-grid,
+  body.nm-admin-shell .cash-grid,
+  body.nm-admin-shell .detail-grid,
+  body.nm-admin-shell .history-grid { grid-template-columns:1fr; }
+
+  body.nm-admin-shell table.nm-responsive-table { min-width:0!important; }
+  body.nm-admin-shell table.nm-responsive-table thead { display:none; }
+  body.nm-admin-shell table.nm-responsive-table tbody { display:grid; gap:.625rem; padding:.625rem; }
+  body.nm-admin-shell table.nm-responsive-table tbody tr:not(.nm-empty-row) {
+    display:grid;
+    gap:0;
+    border:1px solid var(--nm-border);
+    border-radius:var(--nm-radius-lg);
+    background:var(--nm-surface);
+    overflow:hidden;
+  }
+  body.nm-admin-shell table.nm-responsive-table tbody tr:not(.nm-empty-row) td {
+    min-width:0!important;
+    display:grid;
+    grid-template-columns:minmax(92px,.8fr) minmax(0,1.4fr);
+    gap:.75rem;
+    align-items:center;
+    padding:.65rem .75rem;
+    border-bottom:1px solid var(--nm-border);
+    text-align:left!important;
+    overflow-wrap:anywhere;
+  }
+  body.nm-admin-shell table.nm-responsive-table tbody tr:not(.nm-empty-row) td::before {
+    content:attr(data-label);
+    color:var(--nm-text-muted);
+    font-size:.65rem;
+    font-weight:700;
+    letter-spacing:.035em;
+    text-transform:uppercase;
+  }
+  body.nm-admin-shell table.nm-responsive-table tbody tr:not(.nm-empty-row) td:last-child { border-bottom:0; }
+  body.nm-admin-shell table.nm-responsive-table .actions { justify-content:flex-start; }
+  body.nm-admin-shell .table-wrap { overflow:visible; }
+}
+@media (max-width:560px) {
+  body.nm-admin-shell .grid-form,
+  body.nm-admin-shell .product-form,
+  body.nm-admin-shell .customer-form,
+  body.nm-admin-shell .supplier-form,
+  body.nm-admin-shell .purchase-form,
+  body.nm-admin-shell .filter-bar,
+  body.nm-admin-shell .report-filters,
+  body.nm-admin-shell .dashboard-filter,
+  body.nm-admin-shell .compact-form,
+  body.nm-admin-shell .cash-actions,
+  body.nm-admin-shell .item-search-row,
+  body.nm-admin-shell .import-grid { grid-template-columns:1fr; }
+  body.nm-admin-shell .span-2 { grid-column:auto; }
+  body.nm-admin-shell .nm-stat-grid,
+  body.nm-admin-shell .stock-summary,
+  body.nm-admin-shell .finance-summary,
+  body.nm-admin-shell .cash-summary,
+  body.nm-admin-shell .report-summary,
+  body.nm-admin-shell .summary-grid { grid-template-columns:1fr 1fr; }
+  body.nm-admin-shell .nm-stat-card,
+  body.nm-admin-shell .stock-summary > article,
+  body.nm-admin-shell .finance-summary > article,
+  body.nm-admin-shell .cash-summary > div { min-height:94px; }
+  body.nm-admin-shell .wide-dialog,
+  body.nm-admin-shell .purchase-dialog,
+  body.nm-admin-shell .customer-dialog { width:100vw; max-width:none; max-height:100dvh; height:100dvh; border-radius:0; padding:1rem; }
+}
+@media (max-width:380px) {
+  body.nm-admin-shell .nm-stat-grid,
+  body.nm-admin-shell .stock-summary,
+  body.nm-admin-shell .finance-summary,
+  body.nm-admin-shell .cash-summary,
+  body.nm-admin-shell .report-summary,
+  body.nm-admin-shell .summary-grid { grid-template-columns:1fr; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  body.nm-admin-shell *,
+  .nm-toast,
+  #nm-network-bar { scroll-behavior:auto!important; animation:none!important; transition:none!important; }
+}
