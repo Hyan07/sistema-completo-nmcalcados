@@ -20,14 +20,16 @@ const ADMIN_HTML_FILES = new Set([
   'users.html'
 ]);
 
-const SHELL_VERSION = '20260830-6';
+const SHELL_VERSION = '20260830-7';
 const DESIGN_STYLE_TAG = `<link rel="stylesheet" href="/css/design-system.css?v=${SHELL_VERSION}" data-nm-design-system>`;
 const SHELL_STYLE_TAG = `<link rel="stylesheet" href="/css/admin-shell.css?v=${SHELL_VERSION}" data-nm-admin-shell-style>`;
+const COMPONENT_STYLE_TAG = `<link rel="stylesheet" href="/css/erp-components.css?v=${SHELL_VERSION}" data-nm-erp-components>`;
 const SHELL_SCRIPT_TAG = `<script src="/js/admin-shell.js?v=${SHELL_VERSION}" defer data-nm-admin-shell-script></script>`;
+const UI_SCRIPT_TAG = `<script src="/js/ui-core.js?v=${SHELL_VERSION}" defer data-nm-ui-core></script>`;
 
 const MANAGED_ASSET_PATTERNS = [
-  /\s*<link[^>]+href=["']\/css\/(?:design-system|admin-shell|bankdash-theme|ux-navigation)\.css(?:\?[^"']*)?["'][^>]*>\s*/gi,
-  /\s*<script[^>]+src=["']\/js\/(?:admin-shell|ui-polish|ux-navigation)\.js(?:\?[^"']*)?["'][^>]*><\/script>\s*/gi
+  /\s*<link[^>]+href=["']\/css\/(?:design-system|admin-shell|erp-components|bankdash-theme|ux-navigation)\.css(?:\?[^"']*)?["'][^>]*>\s*/gi,
+  /\s*<script[^>]+src=["']\/js\/(?:admin-shell|ui-core|ui-polish|ux-navigation)\.js(?:\?[^"']*)?["'][^>]*><\/script>\s*/gi
 ];
 
 function stripManagedAssets(html) {
@@ -36,8 +38,8 @@ function stripManagedAssets(html) {
 
 function injectAdminAssets(html) {
   let result = stripManagedAssets(html);
-  result = result.replace('</head>', `  ${DESIGN_STYLE_TAG}\n  ${SHELL_STYLE_TAG}\n</head>`);
-  result = result.replace('</body>', `  ${SHELL_SCRIPT_TAG}\n</body>`);
+  result = result.replace('</head>', `  ${DESIGN_STYLE_TAG}\n  ${SHELL_STYLE_TAG}\n  ${COMPONENT_STYLE_TAG}\n</head>`);
+  result = result.replace('</body>', `  ${SHELL_SCRIPT_TAG}\n  ${UI_SCRIPT_TAG}\n</body>`);
   return result;
 }
 
