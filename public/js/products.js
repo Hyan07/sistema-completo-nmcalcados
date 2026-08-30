@@ -6,6 +6,8 @@ const categoryForm = document.getElementById('category-form');
 const brandForm = document.getElementById('brand-form');
 const productForm = document.getElementById('product-form');
 const productCreateCard = document.getElementById('product-create-card');
+const toggleProductCreate = document.getElementById('toggle-product-create');
+const closeProductCreate = document.getElementById('close-product-create');
 const categoriesBody = document.getElementById('categories-body');
 const brandsBody = document.getElementById('brands-body');
 const productsBody = document.getElementById('products-body');
@@ -28,10 +30,19 @@ function escapeHtml(value) { return String(value ?? '').replace(/[&<>"']/g, (cha
 function setFeedback(message, error = false, target = feedback) { target.textContent = message; target.classList.toggle('is-error', error); }
 function money(value) { return Number(value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
 function selectedValue(value) { return value === null || value === undefined ? '' : String(value); }
+function setCreatePanel(open) {
+  if (!can('products.manage')) return;
+  productCreateCard.hidden = !open;
+  toggleProductCreate?.setAttribute('aria-expanded', String(open));
+  if (open) {
+    productCreateCard.scrollIntoView({ behavior:'smooth', block:'start' });
+    window.setTimeout(() => productForm.internalCode?.focus(), 220);
+  }
+}
 
 async function api(url, options = {}) {
   const headers = options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' };
-  const response = await fetch(url, { credentials: 'same-origin', ...options, headers: { ...headers, ...(options.headers || {}) } });
+  const response = await fetch(url, { credentials:'same-origin', ...options, headers:{ ...headers, ...(options.headers || {}) } });
   if (response.status === 204) return null;
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data.message || 'Operação não concluída.');
@@ -138,27 +149,35 @@ async function initialize() {
     const session = await api('/api/auth/me');
     permissions = session.permissions;
     if (!can('products.read')) throw new Error('Você não possui permissão para consultar produtos.');
-    categoryForm.hidden = !can('products.manage'); brandForm.hidden = !can('products.manage'); productCreateCard.hidden = !can('products.manage');
-    await loadTaxonomies(); await loadProducts(1); setFeedback('Produtos atualizados.');
+    const manageable = can('products.manage');
+    categoryForm.hidden = !manageable;
+    brandForm.hidden = !manageable;
+    toggleProductCreate.hidden = !manageable;
+    productCreateCard.hidden = true;
+    await loadTaxonomies();
+    await loadProducts(1);
+    setFeedback('Produtos atualizados.');
   } catch (error) { setFeedback(error.message, true); }
 }
 
-categoryForm.addEventListener('submit', async (event) => { event.preventDefault(); try { await api('/api/categories', { method:'POST', body: JSON.stringify({ name: categoryForm.name.value, parentId: categoryForm.parentId.value || null }) }); categoryForm.reset(); await loadTaxonomies(); setFeedback('Categoria criada.'); } catch (error) { setFeedback(error.message, true); } });
-brandForm.addEventListener('submit', async (event) => { event.preventDefault(); try { await api('/api/brands', { method:'POST', body: JSON.stringify({ name: brandForm.name.value }) }); brandForm.reset(); await loadTaxonomies(); setFeedback('Marca criada.'); } catch (error) { setFeedback(error.message, true); } });
-productForm.addEventListener('submit', async (event) => { event.preventDefault(); try { const created = await api('/api/products', { method:'POST', body: JSON.stringify(productPayload(productForm)) }); productForm.reset(); productForm.baseCostPrice.value='0.00'; productForm.baseSalePrice.value='0.00'; await loadProducts(1); setFeedback(`Produto #${created.id} criado.`); } catch (error) { setFeedback(error.message, true); } });
+toggleProductCreate?.addEventListener('click', () => setCreatePanel(productCreateCard.hidden));
+closeProductCreate?.addEventListener('click', () => setCreatePanel(false));
+categoryForm.addEventListener('submit', async (event) => { event.preventDefault(); try { await api('/api/categories', { method:'POST', body:JSON.stringify({ name:categoryForm.name.value, parentId:categoryForm.parentId.value || null }) }); categoryForm.reset(); await loadTaxonomies(); setFeedback('Categoria criada.'); } catch (error) { setFeedback(error.message, true); } });
+brandForm.addEventListener('submit', async (event) => { event.preventDefault(); try { await api('/api/brands', { method:'POST', body:JSON.stringify({ name:brandForm.name.value }) }); brandForm.reset(); await loadTaxonomies(); setFeedback('Marca criada.'); } catch (error) { setFeedback(error.message, true); } });
+productForm.addEventListener('submit', async (event) => { event.preventDefault(); try { const created = await api('/api/products', { method:'POST', body:JSON.stringify(productPayload(productForm)) }); productForm.reset(); productForm.baseCostPrice.value='0.00'; productForm.baseSalePrice.value='0.00'; await loadProducts(1); setCreatePanel(false); setFeedback(`Produto #${created.id} criado.`); } catch (error) { setFeedback(error.message, true); } });
 
-categoriesBody.addEventListener('click', async (event) => { if (!event.target.classList.contains('save-category')) return; const row = event.target.closest('tr'); try { await api(`/api/categories/${row.dataset.id}`, { method:'PATCH', body: JSON.stringify({ name: row.querySelector('.category-name').value, parentId: row.querySelector('.category-parent').value || null, isActive: row.querySelector('.category-active').value === 'true' }) }); await loadTaxonomies(); setFeedback('Categoria atualizada.'); } catch (error) { setFeedback(error.message, true); } });
-brandsBody.addEventListener('click', async (event) => { if (!event.target.classList.contains('save-brand')) return; const row = event.target.closest('tr'); try { await api(`/api/brands/${row.dataset.id}`, { method:'PATCH', body: JSON.stringify({ name: row.querySelector('.brand-name').value, isActive: row.querySelector('.brand-active').value === 'true' }) }); await loadTaxonomies(); setFeedback('Marca atualizada.'); } catch (error) { setFeedback(error.message, true); } });
+categoriesBody.addEventListener('click', async (event) => { if (!event.target.classList.contains('save-category')) return; const row = event.target.closest('tr'); try { await api(`/api/categories/${row.dataset.id}`, { method:'PATCH', body:JSON.stringify({ name:row.querySelector('.category-name').value, parentId:row.querySelector('.category-parent').value || null, isActive:row.querySelector('.category-active').value === 'true' }) }); await loadTaxonomies(); setFeedback('Categoria atualizada.'); } catch (error) { setFeedback(error.message, true); } });
+brandsBody.addEventListener('click', async (event) => { if (!event.target.classList.contains('save-brand')) return; const row = event.target.closest('tr'); try { await api(`/api/brands/${row.dataset.id}`, { method:'PATCH', body:JSON.stringify({ name:row.querySelector('.brand-name').value, isActive:row.querySelector('.brand-active').value === 'true' }) }); await loadTaxonomies(); setFeedback('Marca atualizada.'); } catch (error) { setFeedback(error.message, true); } });
 productsBody.addEventListener('click', async (event) => { const id = event.target.dataset.id; if (event.target.classList.contains('edit-product')) { try { await openProduct(id); } catch (error) { setFeedback(error.message, true); } } if (event.target.classList.contains('images-product')) { try { await loadImages(id, event.target.dataset.name); } catch (error) { setFeedback(error.message, true); } } });
-productEditForm.addEventListener('submit', async (event) => { event.preventDefault(); if (!can('products.manage')) return productDialog.close(); try { await api(`/api/products/${productEditForm.id.value}`, { method:'PATCH', body: JSON.stringify(productPayload(productEditForm)) }); productDialog.close(); await loadProducts(); setFeedback('Produto atualizado.'); } catch (error) { setFeedback(error.message, true); } });
+productEditForm.addEventListener('submit', async (event) => { event.preventDefault(); if (!can('products.manage')) return productDialog.close(); try { await api(`/api/products/${productEditForm.id.value}`, { method:'PATCH', body:JSON.stringify(productPayload(productEditForm)) }); productDialog.close(); await loadProducts(); setFeedback('Produto atualizado.'); } catch (error) { setFeedback(error.message, true); } });
 document.getElementById('cancel-product-edit').addEventListener('click', () => productDialog.close());
 filtersForm.addEventListener('submit', async (event) => { event.preventDefault(); try { await loadProducts(1); } catch (error) { setFeedback(error.message, true); } });
 document.getElementById('refresh-products').addEventListener('click', () => loadProducts().catch((error) => setFeedback(error.message, true)));
 document.getElementById('prev-page').addEventListener('click', () => loadProducts(currentPage - 1).catch((error) => setFeedback(error.message, true)));
 document.getElementById('next-page').addEventListener('click', () => loadProducts(currentPage + 1).catch((error) => setFeedback(error.message, true)));
 
-imageUploadForm.addEventListener('submit', async (event) => { event.preventDefault(); if (!currentImageProductId) return; const formData = new FormData(imageUploadForm); try { const response = await api(`/api/products/${currentImageProductId}/images`, { method:'POST', body: formData }); imageUploadForm.reset(); setFeedback(`${response.data.length} imagem(ns) cadastrada(s) no total.`, false, imageFeedback); await loadImages(currentImageProductId); await loadProducts(); } catch (error) { setFeedback(error.message, true, imageFeedback); } });
-imageGallery.addEventListener('click', async (event) => { const imageId = event.target.dataset.imageId; if (!imageId || !currentImageProductId) return; try { if (event.target.classList.contains('set-primary')) await api(`/api/products/${currentImageProductId}/images/${imageId}`, { method:'PATCH', body: JSON.stringify({ isPrimary: true }) }); if (event.target.classList.contains('remove-image')) await api(`/api/products/${currentImageProductId}/images/${imageId}`, { method:'DELETE' }); await loadImages(currentImageProductId); await loadProducts(); } catch (error) { setFeedback(error.message, true, imageFeedback); } });
+imageUploadForm.addEventListener('submit', async (event) => { event.preventDefault(); if (!currentImageProductId) return; const formData = new FormData(imageUploadForm); try { const response = await api(`/api/products/${currentImageProductId}/images`, { method:'POST', body:formData }); imageUploadForm.reset(); setFeedback(`${response.data.length} imagem(ns) cadastrada(s) no total.`, false, imageFeedback); await loadImages(currentImageProductId); await loadProducts(); } catch (error) { setFeedback(error.message, true, imageFeedback); } });
+imageGallery.addEventListener('click', async (event) => { const imageId = event.target.dataset.imageId; if (!imageId || !currentImageProductId) return; try { if (event.target.classList.contains('set-primary')) await api(`/api/products/${currentImageProductId}/images/${imageId}`, { method:'PATCH', body:JSON.stringify({ isPrimary:true }) }); if (event.target.classList.contains('remove-image')) await api(`/api/products/${currentImageProductId}/images/${imageId}`, { method:'DELETE' }); await loadImages(currentImageProductId); await loadProducts(); } catch (error) { setFeedback(error.message, true, imageFeedback); } });
 document.getElementById('close-images').addEventListener('click', () => { imagesDialog.close(); currentImageProductId = null; });
 
 initialize();
