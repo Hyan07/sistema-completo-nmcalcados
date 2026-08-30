@@ -1,0 +1,17 @@
+'use strict';
+const express=require('express');
+const controller=require('../controllers/cashController');
+const {authenticate}=require('../middlewares/authenticate');
+const {authorize}=require('../middlewares/authorize');
+const router=express.Router();
+router.use(authenticate);
+router.get('/registers',authorize('cash.read'),controller.registers);
+router.post('/registers',authorize('cash.manage'),controller.createRegister);
+router.patch('/registers/:id',authorize('cash.manage'),controller.updateRegister);
+router.get('/sessions',authorize('cash.read'),controller.sessions);
+router.get('/sessions/current',authorize('cash.read'),controller.current);
+router.post('/sessions',authorize('cash.manage'),controller.open);
+router.get('/sessions/:id',authorize('cash.read'),controller.getSession);
+router.post('/sessions/:id/movements',authorize('cash.manage'),controller.movement);
+router.post('/sessions/:id/close',authorize('cash.manage'),controller.close);
+module.exports=router;

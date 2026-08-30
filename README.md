@@ -4,11 +4,11 @@ ERP/POS monolítico e integrado para a NM Calçados, com backend Node.js/Express
 
 ## Estado atual
 
-**FASE 9 — PDV e vendas concluída.**
+**FASE 10 — Caixa e formas de pagamento concluída.**
 
-Já existem autenticação e permissões, auditoria, produtos, grade por cor/tamanho/SKU, estoque transacional, clientes, fornecedores, compras/recebimentos e PDV com venda em rascunho, finalização e cancelamento integrado ao estoque.
+O sistema já possui autenticação/RBAC, produtos e grade, estoque transacional, clientes, fornecedores/compras, PDV/vendas e agora caixa com abertura/fechamento, suprimento/sangria e pagamentos por dinheiro, PIX, débito e crédito parcelado.
 
-A venda mantém separação rigorosa entre operação comercial e financeiro: rascunho não baixa estoque; finalizar gera `SALE` por item dentro da mesma transação; cancelar venda concluída e ainda sem vínculos financeiros gera `SALE_CANCEL`. Pagamentos e caixa serão implementados na FASE 10.
+Venda, alocação de pagamento e recebimento são fatos separados. Dinheiro/PIX geram recebimento imediato; cartões geram recebíveis para liquidação posterior. O fechamento do caixa físico considera somente numerário.
 
 ## Execução local
 
@@ -22,19 +22,28 @@ npm test
 npm run dev
 ```
 
+No Windows: `Copy-Item .env.example .env`.
+
 ## Módulos disponíveis
 
+- PDV: `/pages/pos.html`
+- Caixa: `/pages/cash.html`
 - Produtos: `/pages/products.html`
 - Grade: `/pages/grade.html`
 - Estoque: `/pages/stock.html`
 - Clientes: `/pages/customers.html`
 - Fornecedores: `/pages/suppliers.html`
 - Compras: `/pages/purchases.html`
-- PDV/Vendas: `/pages/pos.html`
 - Usuários: `/pages/users.html`
 
-A FASE 9 adiciona `012_sales_phase9.sql`, permissões `sales.read` e `sales.discount`, trilha de finalização/cancelamento idempotente e itens de venda com cancelamento lógico em rascunho.
+Documentação da fase: `docs/CAIXA_PAGAMENTOS.md`.
+
+## Banco
+
+Migrations ficam em `src/database/migrations/` e são controladas por `schema_migrations` com checksum. Não altere migrations já aplicadas.
+
+A FASE 10 adiciona `013_cash_payments_phase10.sql`, com lotes idempotentes de pagamento, formas padrão, chaves de operação em caixa/recebimentos, novos tipos de movimento e proteção de imutabilidade dos ledgers.
 
 ## Próxima fase
 
-**FASE 10 — Caixa e formas de pagamento.**
+**FASE 11 — Financeiro.**

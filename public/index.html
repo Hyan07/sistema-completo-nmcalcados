@@ -1,2 +1,43 @@
 <!DOCTYPE html>
-<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Sistema integrado NM Calçados"><title>NM Calçados | Acesso ao sistema</title><link rel="stylesheet" href="/css/main.css"></head><body><main class="auth-shell"><section class="auth-card" aria-labelledby="page-title"><div class="brand-mark" aria-hidden="true">NM</div><p class="eyebrow">NM Calçados</p><h1 id="page-title">Sistema de gestão</h1><p class="subtitle">Acesso restrito à equipe autorizada.</p><form id="login-form" class="auth-form"><label for="username">Usuário</label><input id="username" name="username" autocomplete="username" maxlength="80" required><label for="password">Senha</label><div class="password-field"><input id="password" name="password" type="password" autocomplete="current-password" maxlength="128" required><button id="toggle-password" type="button" class="text-button">Mostrar</button></div><button id="login-button" type="submit" class="primary-button">Entrar</button></form><section id="session-panel" class="session-panel" hidden><p>Conectado como <strong id="session-user"></strong></p><p id="session-role" class="muted"></p><div class="session-actions"><a id="pos-link" class="secondary-link" href="/pages/pos.html" hidden>PDV</a><a id="products-link" class="secondary-link" href="/pages/products.html" hidden>Produtos</a><a id="grade-link" class="secondary-link" href="/pages/grade.html" hidden>Grade</a><a id="stock-link" class="secondary-link" href="/pages/stock.html" hidden>Estoque</a><a id="customers-link" class="secondary-link" href="/pages/customers.html" hidden>Clientes</a><a id="suppliers-link" class="secondary-link" href="/pages/suppliers.html" hidden>Fornecedores</a><a id="purchases-link" class="secondary-link" href="/pages/purchases.html" hidden>Compras</a><a id="users-link" class="secondary-link" href="/pages/users.html" hidden>Gerenciar usuários</a><button id="logout-button" type="button" class="secondary-button">Sair</button></div></section><p id="feedback" class="feedback" role="status" aria-live="polite"></p></section></main><script src="/js/main.js" defer></script></body></html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sistema integrado NM Calçados">
+  <title>NM Calçados | Acesso ao sistema</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+<main class="auth-shell">
+  <section class="auth-card" aria-labelledby="page-title">
+    <div class="brand-mark" aria-hidden="true">NM</div>
+    <p class="eyebrow">NM Calçados</p>
+    <h1 id="page-title">Sistema de gestão</h1>
+    <p class="subtitle">Acesso restrito à equipe autorizada.</p>
+    <form id="login-form" class="auth-form">
+      <label for="username">Usuário</label><input id="username" name="username" autocomplete="username" maxlength="80" required>
+      <label for="password">Senha</label>
+      <div class="password-field"><input id="password" name="password" type="password" autocomplete="current-password" maxlength="128" required><button id="toggle-password" type="button" class="text-button">Mostrar</button></div>
+      <button id="login-button" type="submit" class="primary-button">Entrar</button>
+    </form>
+    <section id="session-panel" class="session-panel" hidden>
+      <p>Conectado como <strong id="session-user"></strong></p><p id="session-role" class="muted"></p>
+      <div class="session-actions">
+        <a id="pos-link" class="secondary-link" href="/pages/pos.html" hidden>PDV</a>
+        <a id="cash-link" class="secondary-link" href="/pages/cash.html" hidden>Caixa</a>
+        <a id="products-link" class="secondary-link" href="/pages/products.html" hidden>Produtos</a>
+        <a id="grade-link" class="secondary-link" href="/pages/grade.html" hidden>Grade</a>
+        <a id="stock-link" class="secondary-link" href="/pages/stock.html" hidden>Estoque</a>
+        <a id="customers-link" class="secondary-link" href="/pages/customers.html" hidden>Clientes</a>
+        <a id="suppliers-link" class="secondary-link" href="/pages/suppliers.html" hidden>Fornecedores</a>
+        <a id="purchases-link" class="secondary-link" href="/pages/purchases.html" hidden>Compras</a>
+        <a id="users-link" class="secondary-link" href="/pages/users.html" hidden>Gerenciar usuários</a>
+        <button id="logout-button" type="button" class="secondary-button">Sair</button>
+      </div>
+    </section>
+    <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+  </section>
+</main>
+<script src="/js/main.js" defer></script>
+</body>
+</html>

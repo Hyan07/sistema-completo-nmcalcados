@@ -1,15 +1,15 @@
-# PDV e vendas — FASE 9
+# PDV e vendas — FASE 9 (integrada à FASE 10)
 
 ## Princípio comercial
 
-A venda é controlada separadamente de recebimentos e caixa.
+A venda continua separada de recebimentos e caixa.
 
 - `DRAFT`: venda em montagem; não altera estoque.
-- `COMPLETED`: venda finalizada; cada item gera uma movimentação `SALE`.
-- `CANCELLED`: venda concluída cancelada antes de possuir vínculos financeiros; cada item gera `SALE_CANCEL`.
+- `COMPLETED`: venda finalizada; cada item gera `SALE`.
+- `CANCELLED`: venda cancelada; cada item gera `SALE_CANCEL`.
 - `PARTIALLY_RETURNED` e `RETURNED`: reservados para devoluções futuras.
 
-A FASE 9 não cria `sale_payment_allocations`, `receipts`, `receivables` ou movimentos de caixa. Esses vínculos pertencem à FASE 10 e às fases financeiras.
+A FASE 10 passou a registrar formas de pagamento e recebimentos sem alterar a natureza da venda. O status financeiro é derivado das alocações confirmadas: `UNPAID`, `PARTIAL` ou `SETTLED`.
 
 ## Preço e snapshots
 
@@ -19,44 +19,31 @@ Ao inserir um SKU no rascunho, o preço vigente é resolvido na seguinte preced�
 
 Vendedor/Caixa podem montar e finalizar vendas pelo preço vigente através de `sales.create`. Desconto manual de item, desconto geral e acréscimo exigem `sales.discount`. Administrador e Gerente recebem essa permissão por padrão.
 
-`discount_amount` no item representa o desconto total da linha. `line_total` é a verdade monetária da linha; `effective_unit_price` é uma média unitária arredondada para duas casas.
-
 ## Finalização transacional
 
 A finalização exige `operationKey` única. O backend bloqueia a venda, recalcula totais, valida cliente/itens/SKUs, baixa cada item com `stockService.applyStockMovement(..., { connection })`, registra `SALE`, marca a venda `COMPLETED`, audita e confirma tudo na mesma transação. Se qualquer SKU não possuir saldo suficiente, a transação inteira é revertida.
 
-## Cancelamento
+Finalizar a venda não significa receber o dinheiro. Os pagamentos são registrados depois em `/api/payments/sales/:saleId`, preservando a distinção entre fato comercial e financeiro.
 
-Cancelamento exige `sales.cancel`, motivo e chave idempotente. Somente venda `COMPLETED`, ainda sem alocações de pagamento ou contas a receber, pode ser cancelada nesta fase. O serviço gera `SALE_CANCEL` para todos os itens e marca a venda `CANCELLED` na mesma transação.
+## Cancelamento integrado após a FASE 10
 
-## Itens em rascunho
+O mesmo endpoint `POST /api/sales/:id/cancel` continua exigindo `sales.cancel`, motivo e chave idempotente, mas agora coordena também o estorno financeiro quando houver pagamentos:
 
-Itens podem ser adicionados, ter quantidade alterada ou ser cancelados logicamente somente em `DRAFT`. Não há exclusão física pelo fluxo administrativo.
+- reverte recebimentos imediatos elegíveis;
+- cancela recebíveis dos lotes;
+- marca lotes como revertidos;
+- cria saída `RECEIPT_REVERSAL` quando houve dinheiro em caixa ainda aberto;
+- gera `SALE_CANCEL` para os SKUs;
+- marca a venda `CANCELLED`.
 
-## Idempotência
-
-`sales.completion_operation_key` e `sales.cancellation_operation_key` são únicas. Cada movimentação de estoque recebe SHA-256 derivado da operação, item e tipo (`SALE` ou `SALE_CANCEL`).
+Se o dinheiro pertence a uma sessão de caixa já fechada, o cancelamento é bloqueado para não alterar retrospectivamente um fechamento auditado.
 
 ## Permissões
 
 - `sales.read`: consultar vendas e PDV;
 - `sales.create`: criar/editar rascunho e finalizar;
 - `sales.discount`: aplicar descontos/acréscimos;
-- `sales.cancel`: cancelar venda concluída conforme regras.
-
-## Endpoints
-
-- `GET /api/sales`
-- `GET /api/sales/meta/skus?q=`
-- `GET /api/sales/:id`
-- `POST /api/sales`
-- `PATCH /api/sales/:id`
-- `POST /api/sales/:id/items`
-- `PATCH /api/sales/:id/items/:itemId`
-- `POST /api/sales/:id/items/:itemId/cancel`
-- `PATCH /api/sales/:id/pricing`
-- `PATCH /api/sales/:id/items/:itemId/discount`
-- `POST /api/sales/:id/finalize`
-- `POST /api/sales/:id/cancel`
+- `sales.cancel`: cancelar venda conforme regras;
+- `payments.read`/`payments.manage`: consultar e registrar os fatos financeiros da venda (FASE 10).
 
 Tela: `/pages/pos.html`.

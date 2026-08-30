@@ -13,6 +13,8 @@ const customerRoutes = require('./customerRoutes');
 const supplierRoutes = require('./supplierRoutes');
 const purchaseRoutes = require('./purchaseRoutes');
 const saleRoutes = require('./saleRoutes');
+const cashRoutes = require('./cashRoutes');
+const paymentRoutes = require('./paymentRoutes');
 
 const router = express.Router();
 router.get('/health', (req, res) => { res.status(200).json({ status: 'ok', application: 'nm-calcados' }); });
@@ -28,4 +30,6 @@ router.use('/customers', customerRoutes);
 router.use('/suppliers', supplierRoutes);
 router.use('/purchases', purchaseRoutes);
 router.use('/sales', saleRoutes);
+router.use('/cash', cashRoutes);
+router.use('/payments', paymentRoutes);
 module.exports = router;

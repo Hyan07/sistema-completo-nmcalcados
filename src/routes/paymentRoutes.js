@@ -1,0 +1,11 @@
+'use strict';
+const express=require('express');
+const controller=require('../controllers/paymentController');
+const {authenticate}=require('../middlewares/authenticate');
+const {authorize}=require('../middlewares/authorize');
+const router=express.Router();
+router.use(authenticate);
+router.get('/methods',authorize('payments.read'),controller.methods);
+router.get('/sales/:saleId',authorize('payments.read'),controller.salePayments);
+router.post('/sales/:saleId',authorize('payments.manage'),controller.record);
+module.exports=router;
