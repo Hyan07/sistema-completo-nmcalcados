@@ -32,13 +32,19 @@ function createApp() {
 
   app.use('/media/products', express.static(productMediaDir, { dotfiles: 'deny', index: false, maxAge: env.isProduction ? '7d' : 0 }));
   app.use('/pages', createAdminPageShellMiddleware(publicDir));
-  app.use(express.static(publicDir, { dotfiles: 'deny', index: 'index.html' }));
 
-  app.use('/api', routes);
-
+  // Experiência pública principal: o domínio abre diretamente no catálogo.
   app.get('/', (req, res) => {
+    res.sendFile(path.join(publicDir, 'catalog', 'index.html'));
+  });
+
+  // Entrada administrativa explícita, separada da experiência de compra.
+  app.get('/admin', (req, res) => {
     res.sendFile(path.join(publicDir, 'index.html'));
   });
+
+  app.use(express.static(publicDir, { dotfiles: 'deny', index: 'index.html' }));
+  app.use('/api', routes);
 
   app.use(notFound);
   app.use(errorHandler);
