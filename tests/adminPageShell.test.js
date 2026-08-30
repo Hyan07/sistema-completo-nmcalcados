@@ -10,11 +10,15 @@ test('shell administrativo cobre todos os módulos internos principais', () => {
   }
 });
 
-test('injeta CSS e JS versionados uma única vez', () => {
+test('injeta shell e tema BankDash versionados uma única vez', () => {
   const original = '<!doctype html><html><head></head><body><main></main></body></html>';
   const first = injectAdminAssets(original);
   const second = injectAdminAssets(first);
+
   assert.match(first, new RegExp(`/css/admin-shell\\.css\\?v=${SHELL_VERSION}`));
+  assert.match(first, new RegExp(`/css/bankdash-theme\\.css\\?v=${SHELL_VERSION}`));
   assert.match(first, new RegExp(`/js/admin-shell\\.js\\?v=${SHELL_VERSION}`));
+  assert.match(first, new RegExp(`/js/ui-polish\\.js\\?v=${SHELL_VERSION}`));
   assert.equal((second.match(/data-nm-admin-shell/g) || []).length, 2);
+  assert.equal((second.match(/data-nm-bankdash-shell/g) || []).length, 2);
 });
