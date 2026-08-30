@@ -3,7 +3,7 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const {normalizeOrigin,requestOrigin,requireTrustedOrigin,sourceOrigin}=require('../src/middlewares/requestOriginGuard');
 function req(overrides={}){const headers=Object.fromEntries(Object.entries(overrides.headers||{}).map(([k,v])=>[k.toLowerCase(),v]));return{method:'POST',protocol:'https',headers,session:{auth:{userId:7}},get(name){return headers[name.toLowerCase()]||null;},...overrides,headers};}
-function run(r){return new Promise(resolve=>requireTrustedOrigin(r,{},error=>resolve(error||null)));}
+function run(r,configuredOrigin=''){return new Promise(resolve=>requireTrustedOrigin(r,{},error=>resolve(error||null),configuredOrigin));}
 
 test('normalizeOrigin aceita somente origem http/https',()=>{
   assert.equal(normalizeOrigin('https://loja.example.com/path'),'https://loja.example.com');
@@ -11,7 +11,9 @@ test('normalizeOrigin aceita somente origem http/https',()=>{
   assert.equal(normalizeOrigin('null'),null);
 });
 
-test('requestOrigin deriva protocolo e Host quando APP_ORIGIN não está configurado',()=>assert.equal(requestOrigin(req({headers:{host:'loja.test'}})),'https://loja.test'));
+test('requestOrigin deriva protocolo e Host quando APP_ORIGIN não está configurado',()=>assert.equal(requestOrigin(req({headers:{host:'loja.test'}}),''),'https://loja.test'));
+
+test('requestOrigin usa origem configurada quando fornecida',()=>assert.equal(requestOrigin(req({headers:{host:'loja.test'}}),'https://app.example.com'),'https://app.example.com'));
 
 test('sourceOrigin prioriza Origin e aceita Referer como fallback',()=>{
   assert.equal(sourceOrigin(req({headers:{host:'loja.test',origin:'https://loja.test'}})),'https://loja.test');
@@ -21,6 +23,8 @@ test('sourceOrigin prioriza Origin e aceita Referer como fallback',()=>{
 test('GET não exige validação de origem',async()=>assert.equal(await run(req({method:'GET',headers:{host:'loja.test'}})),null));
 
 test('mutação autenticada same-origin é aceita',async()=>assert.equal(await run(req({headers:{host:'loja.test',origin:'https://loja.test'}})),null));
+
+test('mutação autenticada respeita APP_ORIGIN explicitamente configurado',async()=>assert.equal(await run(req({headers:{host:'proxy.internal',origin:'https://app.example.com'}}),'https://app.example.com'),null));
 
 test('mutação autenticada cross-origin é bloqueada',async()=>{
   const error=await run(req({headers:{host:'loja.test',origin:'https://evil.test'}}));
