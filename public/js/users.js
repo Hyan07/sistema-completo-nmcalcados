@@ -13,12 +13,18 @@ let roles = [];
 let permissionCatalog = [];
 let resetUserId = null;
 
+const PERMISSION_GROUP_LABELS = {
+  dashboard: 'Dashboard', sales: 'Vendas', cash: 'Caixa', catalog: 'Catálogo', products: 'Produtos', stock: 'Estoque',
+  customers: 'Clientes', suppliers: 'Fornecedores', purchases: 'Compras', finance: 'Financeiro', reports: 'Relatórios',
+  imports: 'Importações', users: 'Usuários', roles: 'Cargos', permissions: 'Permissões', audit: 'Auditoria'
+};
+
 function can(code) { return permissions.includes(code); }
 function setFeedback(message, error = false) { feedback.textContent = message; feedback.classList.toggle('is-error', error); }
 function escapeHtml(value) { return String(value ?? '').replace(/[&<>'\"]/g, (char) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '\"':'&quot;' }[char])); }
 function selectedValues(select) { return [...select.selectedOptions].map((option) => option.value); }
 async function api(url, options = {}) {
-  const response = await fetch(url, { credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, ...options });
+  const response = await fetch(url, { credentials:'same-origin', headers:{ 'Content-Type':'application/json' }, ...options });
   if (response.status === 204) return null;
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data.message || 'Operação não concluída.');
@@ -30,7 +36,13 @@ function roleOptions(selectedIds = []) {
 }
 function permissionOptions(selectedIds = []) {
   const selected = new Set(selectedIds.map(String));
-  return permissionCatalog.map((permission) => `<option value="${escapeHtml(permission.id)}" ${selected.has(String(permission.id)) ? 'selected' : ''}>${escapeHtml(permission.code)}</option>`).join('');
+  const groups = new Map();
+  for (const permission of permissionCatalog) {
+    const prefix = String(permission.code || '').split('.')[0] || 'other';
+    if (!groups.has(prefix)) groups.set(prefix, []);
+    groups.get(prefix).push(permission);
+  }
+  return [...groups.entries()].sort(([a],[b]) => (PERMISSION_GROUP_LABELS[a] || a).localeCompare(PERMISSION_GROUP_LABELS[b] || b, 'pt-BR')).map(([prefix, items]) => `<optgroup label="${escapeHtml(PERMISSION_GROUP_LABELS[prefix] || prefix)}">${items.map((permission) => `<option value="${escapeHtml(permission.id)}" ${selected.has(String(permission.id)) ? 'selected' : ''}>${escapeHtml(permission.code)}</option>`).join('')}</optgroup>`).join('');
 }
 function renderUsers(users) {
   body.innerHTML = users.map((user) => {
@@ -56,19 +68,20 @@ async function load() {
       createForm.roleIds.innerHTML = roleOptions();
       createForm.permissionIds.innerHTML = permissionOptions();
     }
+    window.NMUI?.enhance(document.querySelector('.users-table-wrap'));
     setFeedback('Dados atualizados.');
   } catch (error) { setFeedback(error.message, true); }
 }
 createForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   try {
-    await api('/api/users', { method: 'POST', body: JSON.stringify({
-      name: createForm.name.value,
-      username: createForm.username.value,
-      email: createForm.email.value,
-      roleIds: selectedValues(createForm.roleIds),
-      permissionIds: selectedValues(createForm.permissionIds),
-      password: createForm.password.value
+    await api('/api/users', { method:'POST', body:JSON.stringify({
+      name:createForm.name.value,
+      username:createForm.username.value,
+      email:createForm.email.value,
+      roleIds:selectedValues(createForm.roleIds),
+      permissionIds:selectedValues(createForm.permissionIds),
+      password:createForm.password.value
     }) });
     createForm.reset();
     await load();
@@ -80,12 +93,12 @@ body.addEventListener('click', async (event) => {
   if (!row) return;
   try {
     if (event.target.classList.contains('save')) {
-      await api(`/api/users/${row.dataset.userId}`, { method: 'PATCH', body: JSON.stringify({
-        name: row.querySelector('.name').value,
-        username: row.querySelector('.username').value,
-        roleIds: selectedValues(row.querySelector('.roles')),
-        permissionIds: selectedValues(row.querySelector('.direct-permissions')),
-        isActive: row.querySelector('.status').value === 'true'
+      await api(`/api/users/${row.dataset.userId}`, { method:'PATCH', body:JSON.stringify({
+        name:row.querySelector('.name').value,
+        username:row.querySelector('.username').value,
+        roleIds:selectedValues(row.querySelector('.roles')),
+        permissionIds:selectedValues(row.querySelector('.direct-permissions')),
+        isActive:row.querySelector('.status').value === 'true'
       }) });
       await load();
       setFeedback('Usuário, cargos e permissões atualizados.');
@@ -102,7 +115,7 @@ passwordResetForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   if (!resetUserId) return;
   try {
-    await api(`/api/users/${resetUserId}/password`, { method: 'PATCH', body: JSON.stringify({ password: resetPasswordInput.value }) });
+    await api(`/api/users/${resetUserId}/password`, { method:'PATCH', body:JSON.stringify({ password:resetPasswordInput.value }) });
     passwordDialog.close();
     resetUserId = null;
     setFeedback('Senha redefinida e sessões antigas invalidadas.');
