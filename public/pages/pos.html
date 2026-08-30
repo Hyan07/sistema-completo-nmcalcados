@@ -7,33 +7,73 @@
 </head>
 <body>
 <main class="admin-shell pos-shell">
-  <header class="admin-header"><div><p class="eyebrow">NM Calçados</p><h1>PDV e vendas</h1><p class="muted">Venda, estoque e recebimento permanecem fatos separados e rastreáveis.</p></div><div class="session-actions"><a class="secondary-link" href="/pages/cash.html">Caixa</a><a class="secondary-link" href="/">Voltar</a></div></header>
-  <section class="pos-grid">
-    <article class="admin-card">
-      <h2>Nova venda</h2>
-      <label>Cliente (opcional)<input id="customer-search" placeholder="Nome, CPF/CNPJ, telefone ou e-mail"></label><div id="customer-results" class="lookup-list"></div><p id="selected-customer" class="muted">Consumidor não identificado.</p>
-      <label>Buscar produto / SKU / código de barras<input id="sku-search" placeholder="Digite ao menos 2 caracteres"></label><div id="sku-results" class="lookup-list"></div>
-      <div class="table-wrap"><table><thead><tr><th>Item</th><th>Qtd.</th><th>Unitário</th><th>Desconto</th><th>Total</th><th></th></tr></thead><tbody id="cart-body"></tbody></table></div>
-      <div class="pos-totals"><span>Subtotal <strong id="subtotal">R$ 0,00</strong></span><label id="sale-discount-field" hidden>Desconto geral<input id="sale-discount" type="number" min="0" step="0.01" value="0.00"></label><label id="sale-surcharge-field" hidden>Acréscimo<input id="sale-surcharge" type="number" min="0" step="0.01" value="0.00"></label><span>Total <strong id="total">R$ 0,00</strong></span></div>
-      <label>Observações<textarea id="sale-notes" rows="2" maxlength="2000"></textarea></label><div class="dialog-actions"><button id="clear-cart" class="secondary-button" type="button">Limpar</button><button id="create-draft" class="primary-button" type="button">Criar rascunho</button></div><p id="feedback" class="feedback" role="status"></p>
-    </article>
+  <header class="admin-header">
+    <div><p class="eyebrow">Comercial</p><h1>PDV e vendas</h1><p class="muted">Monte a venda, revise os valores e finalize antes de registrar o recebimento.</p></div>
+    <div class="page-actions"><a class="secondary-link" href="/pages/customers.html">Clientes</a><a class="secondary-link" href="/pages/cash.html">Caixa</a></div>
+  </header>
 
-    <article class="admin-card" id="current-sale-card" hidden>
-      <h2 id="current-sale-title">Venda</h2><p id="current-sale-status" class="muted"></p><div id="current-sale-summary"></div>
-      <div class="dialog-actions"><button id="finalize-sale" class="primary-button" type="button">Finalizar venda</button><button id="cancel-sale" class="secondary-button" type="button" hidden>Cancelar venda</button></div>
-      <section id="payment-section" hidden>
-        <hr><div class="section-heading"><div><h3>Pagamento</h3><p id="payment-status" class="muted"></p></div><button id="refresh-payments" class="text-button" type="button">Atualizar</button></div>
-        <div id="payment-history"></div>
-        <form id="payment-form" hidden>
-          <p id="cash-session-info" class="muted"></p>
-          <div class="table-wrap"><table><thead><tr><th>Forma</th><th>Valor</th><th>Parcelas</th><th></th></tr></thead><tbody id="payment-rows"></tbody></table></div>
-          <div class="dialog-actions"><button id="add-payment-row" class="secondary-button" type="button">Adicionar forma</button><button class="primary-button" type="submit">Registrar pagamento</button></div>
-        </form>
-      </section>
-    </article>
+  <section class="pos-workspace" aria-label="Nova venda">
+    <div class="pos-discovery-column">
+      <article class="admin-card pos-search-card">
+        <div class="pos-step-heading"><span>1</span><div><h2>Localize os produtos</h2><p>Pesquise por produto, SKU ou código de barras e adicione ao carrinho.</p></div></div>
+        <label class="pos-search-label">Buscar produto / SKU / código de barras
+          <div class="pos-search-box"><span aria-hidden="true">⌕</span><input id="sku-search" type="search" placeholder="Digite ao menos 2 caracteres" autocomplete="off"></div>
+        </label>
+        <div id="sku-results" class="lookup-list pos-product-results"></div>
+      </article>
+
+      <article class="admin-card pos-customer-card">
+        <div class="pos-step-heading compact"><span>2</span><div><h2>Identifique o cliente</h2><p>Opcional. Pesquise antes de criar um novo cadastro para evitar duplicidade.</p></div></div>
+        <label class="pos-search-label">Cliente
+          <input id="customer-search" type="search" placeholder="Nome, CPF/CNPJ, telefone ou e-mail" autocomplete="off">
+        </label>
+        <div id="customer-results" class="lookup-list"></div>
+        <div class="selected-customer-box"><small>Cliente da venda</small><p id="selected-customer" class="muted">Consumidor não identificado.</p></div>
+      </article>
+    </div>
+
+    <div class="pos-sale-column">
+      <article class="admin-card sale-cart-card">
+        <div class="pos-step-heading"><span>3</span><div><h2>Carrinho da venda</h2><p>Revise quantidades, preços e descontos antes de criar o rascunho.</p></div></div>
+        <div class="table-wrap cart-table-wrap"><table class="cart-table"><thead><tr><th>Item</th><th>Qtd.</th><th class="money">Unitário</th><th class="money">Desconto</th><th class="money">Subtotal</th><th></th></tr></thead><tbody id="cart-body"></tbody></table></div>
+
+        <div class="sale-adjustments">
+          <label id="sale-discount-field" hidden>Desconto geral<input id="sale-discount" type="number" min="0" step="0.01" value="0.00"></label>
+          <label id="sale-surcharge-field" hidden>Acréscimo<input id="sale-surcharge" type="number" min="0" step="0.01" value="0.00"></label>
+          <label class="sale-notes-field">Observações<textarea id="sale-notes" rows="2" maxlength="2000" placeholder="Observações opcionais da venda"></textarea></label>
+        </div>
+
+        <div class="pos-totals">
+          <div><span>Subtotal</span><strong id="subtotal">R$ 0,00</strong></div>
+          <div class="is-total"><span>Total da venda</span><strong id="total">R$ 0,00</strong></div>
+        </div>
+        <div class="sale-cart-actions"><button id="clear-cart" class="ghost-button" type="button">Limpar carrinho</button><button id="create-draft" class="primary-button" type="button">Continuar venda</button></div>
+        <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+      </article>
+
+      <article class="admin-card current-sale-card" id="current-sale-card" hidden>
+        <div class="pos-step-heading"><span>4</span><div><h2 id="current-sale-title">Venda</h2><p id="current-sale-status" class="muted"></p></div></div>
+        <div id="current-sale-summary" class="current-sale-summary"></div>
+        <div class="dialog-actions sale-state-actions"><button id="cancel-sale" class="secondary-button" type="button" hidden>Cancelar venda</button><button id="finalize-sale" class="primary-button" type="button">Finalizar venda</button></div>
+        <section id="payment-section" class="payment-workspace" hidden>
+          <div class="payment-heading"><div><p class="eyebrow">Recebimento</p><h3>Registrar pagamento</h3><p id="payment-status" class="muted"></p></div><button id="refresh-payments" class="ghost-button" type="button">Atualizar</button></div>
+          <div id="payment-history" class="payment-history"></div>
+          <form id="payment-form" hidden>
+            <p id="cash-session-info" class="cash-session-info"></p>
+            <div class="table-wrap"><table><thead><tr><th>Forma</th><th class="money">Valor</th><th>Parcelas</th><th></th></tr></thead><tbody id="payment-rows"></tbody></table></div>
+            <div class="dialog-actions"><button id="add-payment-row" class="secondary-button" type="button">+ Adicionar forma</button><button class="primary-button" type="submit">Registrar recebimento</button></div>
+          </form>
+        </section>
+      </article>
+    </div>
   </section>
 
-  <section class="admin-card"><div class="section-heading"><div><h2>Vendas</h2><p class="muted">Rascunhos, concluídas e canceladas.</p></div><button id="refresh-sales" class="secondary-button" type="button">Atualizar</button></div><form id="sale-filters" class="filter-bar"><input name="q" placeholder="Número, cliente ou vendedor"><select name="status"><option value="">Todos</option><option value="DRAFT">Rascunho</option><option value="COMPLETED">Concluída</option><option value="CANCELLED">Cancelada</option></select><input name="dateFrom" type="date"><input name="dateTo" type="date"><button class="secondary-button" type="submit">Filtrar</button></form><div class="table-wrap"><table><thead><tr><th>Venda</th><th>Cliente</th><th>Vendedor</th><th>Total</th><th>Status</th><th>Data</th><th></th></tr></thead><tbody id="sales-body"></tbody></table></div><div class="pagination"><button id="prev-page" class="secondary-button" type="button">Anterior</button><span id="page-info" class="muted"></span><button id="next-page" class="secondary-button" type="button">Próxima</button></div></section>
+  <section class="admin-card nm-table-card sales-history-card">
+    <div class="section-heading"><div><h2>Vendas</h2><p class="muted">Consulte rascunhos, vendas concluídas e cancelamentos.</p></div><button id="refresh-sales" class="secondary-button" type="button">Atualizar</button></div>
+    <div class="nm-filter-shell"><form id="sale-filters" class="filter-bar sale-filters"><input name="q" type="search" placeholder="Pesquisar número, cliente ou vendedor..."><select name="status"><option value="">Todos os status</option><option value="DRAFT">Rascunho</option><option value="COMPLETED">Concluída</option><option value="CANCELLED">Cancelada</option></select><input name="dateFrom" type="date" aria-label="Data inicial"><input name="dateTo" type="date" aria-label="Data final"><button class="secondary-button" type="submit">Aplicar filtros</button></form></div>
+    <div class="table-wrap"><table><thead><tr><th>Venda</th><th>Cliente</th><th>Vendedor</th><th class="money">Total</th><th>Status</th><th>Data</th><th>Ações</th></tr></thead><tbody id="sales-body"></tbody></table></div>
+    <div class="pagination"><button id="prev-page" class="secondary-button" type="button">Anterior</button><span id="page-info" class="muted"></span><button id="next-page" class="secondary-button" type="button">Próxima</button></div>
+  </section>
 </main>
 <script src="/js/pos.js" defer></script>
 </body>
