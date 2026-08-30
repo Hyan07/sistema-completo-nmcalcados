@@ -5,6 +5,7 @@ function showSession(user,permissions=[]){
   form.hidden=true;panel.hidden=false;
   document.getElementById('session-user').textContent=user.name;
   document.getElementById('session-role').textContent=(user.roles||[]).map(r=>r.name).join(' + ')||'Sem cargo ativo';
+  document.getElementById('dashboard-link').hidden=!permissions.includes('dashboard.read');
   document.getElementById('pos-link').hidden=!permissions.includes('sales.read');
   document.getElementById('cash-link').hidden=!permissions.includes('cash.read');
   document.getElementById('finance-link').hidden=!permissions.includes('finance.read');

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>NM Calçados | Dashboard</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+<main class="admin-shell dashboard-shell">
+  <header class="admin-header dashboard-header">
+    <div><p class="eyebrow">NM Calçados</p><h1>Dashboard executivo</h1><p class="muted">Visão consolidada de vendas, estoque, compras, caixa e financeiro.</p></div>
+    <a class="secondary-link" href="/">Voltar</a>
+  </header>
+
+  <section class="admin-card dashboard-filter-card">
+    <form id="dashboard-filter" class="dashboard-filter">
+      <div class="preset-actions"><button type="button" class="secondary-button preset" data-days="7">7 dias</button><button type="button" class="secondary-button preset" data-days="30">30 dias</button><button type="button" class="secondary-button preset" data-days="90">90 dias</button></div>
+      <label>De<input id="date-from" name="dateFrom" type="date"></label>
+      <label>Até<input id="date-to" name="dateTo" type="date"></label>
+      <button class="primary-button" type="submit">Atualizar</button>
+    </form>
+    <p id="period-label" class="muted"></p><p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+  </section>
+
+  <section class="kpi-grid" aria-label="Indicadores principais">
+    <article class="kpi-card"><span>Faturamento</span><strong id="kpi-revenue">—</strong><small id="cmp-revenue"></small></article>
+    <article class="kpi-card"><span>Vendas</span><strong id="kpi-sales">—</strong><small id="cmp-sales"></small></article>
+    <article class="kpi-card"><span>Ticket médio</span><strong id="kpi-ticket">—</strong><small id="cmp-ticket"></small></article>
+    <article class="kpi-card"><span>Unidades vendidas</span><strong id="kpi-units">—</strong><small id="cmp-units"></small></article>
+    <article class="kpi-card"><span>Recebimentos</span><strong id="kpi-receipts">—</strong><small>No período</small></article>
+    <article class="kpi-card"><span>Pagamentos</span><strong id="kpi-disbursements">—</strong><small>No período</small></article>
+    <article class="kpi-card"><span>Fluxo líquido</span><strong id="kpi-net">—</strong><small>Recebimentos − pagamentos</small></article>
+    <article class="kpi-card"><span>Caixas abertos</span><strong id="kpi-open-cash">—</strong><small id="kpi-expected-cash"></small></article>
+  </section>
+
+  <section class="dashboard-two-columns">
+    <article class="admin-card"><div class="section-heading"><div><h2>Vendas por dia</h2><p class="muted">Somente vendas concluídas.</p></div></div><div id="sales-chart" class="chart-box" aria-label="Gráfico de faturamento por dia"></div></article>
+    <article class="admin-card"><div class="section-heading"><div><h2>Formas de pagamento</h2><p class="muted">Alocações confirmadas das vendas do período.</p></div></div><div id="payment-mix" class="bar-list"></div></article>
+  </section>
+
+  <section class="dashboard-two-columns">
+    <article class="admin-card"><h2>Estoque</h2><div id="stock-summary" class="mini-grid"></div><div class="table-wrap"><table><thead><tr><th>SKU</th><th>Produto</th><th>Grade</th><th>Saldo</th><th>Mín.</th></tr></thead><tbody id="low-stock-body"></tbody></table></div></article>
+    <article class="admin-card"><h2>Alertas</h2><div id="alerts-list" class="alerts-list"></div><div id="purchases-summary" class="summary-box"></div></article>
+  </section>
+
+  <section class="dashboard-two-columns">
+    <article class="admin-card"><h2>Produtos mais vendidos</h2><div class="table-wrap"><table><thead><tr><th>Produto</th><th>Unidades</th><th>Faturamento</th></tr></thead><tbody id="top-products-body"></tbody></table></div></article>
+    <article class="admin-card"><h2>Financeiro</h2><div id="finance-summary" class="finance-grid"></div></article>
+  </section>
+
+  <section class="admin-card"><h2>Vendas recentes</h2><div class="table-wrap"><table><thead><tr><th>Venda</th><th>Cliente</th><th>Vendedor</th><th>Unidades</th><th>Total</th><th>Data</th></tr></thead><tbody id="recent-sales-body"></tbody></table></div></section>
+</main>
+<script src="/js/dashboard.js" defer></script>
+</body>
+</html>

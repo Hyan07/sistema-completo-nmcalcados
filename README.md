@@ -4,11 +4,11 @@ ERP/POS monolítico e integrado para a NM Calçados, com backend Node.js/Express
 
 ## Estado atual
 
-**FASE 11 — Financeiro concluída.**
+**FASE 12 — Dashboard concluída.**
 
-O sistema possui autenticação/RBAC, produtos e grade, estoque transacional, clientes, fornecedores/compras, PDV/vendas, caixa e agora contas a receber/pagar com liquidação parcial, estornos, receitas/despesas manuais, financeirização de compras e fluxo financeiro.
+O sistema possui autenticação/RBAC, produtos e grade, estoque transacional, clientes, fornecedores/compras, PDV/vendas, caixa, financeiro completo e agora um dashboard executivo derivado das fontes transacionais.
 
-Venda continua separada de recebimento; compra continua separada de pagamento. Movimentações financeiras são rastreáveis e correções usam estorno, sem apagar ledgers históricos.
+O painel consolida faturamento, vendas, ticket médio, unidades, evolução diária, top produtos, mix de pagamento, estoque/ruptura, compras pendentes, posição financeira, fluxo líquido, caixas abertos e alertas operacionais sem duplicar saldos em tabelas auxiliares.
 
 ## Execução local
 
@@ -26,6 +26,7 @@ No Windows: `Copy-Item .env.example .env`.
 
 ## Módulos disponíveis
 
+- Dashboard: `/pages/dashboard.html`
 - PDV: `/pages/pos.html`
 - Caixa: `/pages/cash.html`
 - Financeiro: `/pages/finance.html`
@@ -37,14 +38,14 @@ No Windows: `Copy-Item .env.example .env`.
 - Compras: `/pages/purchases.html`
 - Usuários: `/pages/users.html`
 
-Documentação da fase: `docs/FINANCEIRO.md`.
+Documentação da fase: `docs/DASHBOARD.md`.
 
 ## Banco
 
 Migrations ficam em `src/database/migrations/` e são controladas por `schema_migrations` com checksum. Não altere migrations já aplicadas.
 
-A FASE 11 adiciona `014_finance_phase11.sql`, com idempotência em obrigações/liquidações, financeirização de compras, transferência bancária, tipos de caixa para financeiro e proteção das alocações de desembolso.
+A FASE 12 adiciona `015_dashboard_phase12.sql`, criando apenas a permissão executiva `dashboard.read`. Os indicadores são calculados das tabelas existentes e não exigem tabelas de agregação duplicadas.
 
 ## Próxima fase
 
-**FASE 12 — Dashboard.**
+**FASE 13 — Relatórios.**
