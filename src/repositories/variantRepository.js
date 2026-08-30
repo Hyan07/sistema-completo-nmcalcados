@@ -106,6 +106,7 @@ async function createSku(variantId, data, connection) {
       promotional_price, minimum_stock, is_active
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `, [variantId, data.sizeId, data.sku, data.barcode, data.costPrice, data.salePrice, data.promotionalPrice, data.minimumStock, data.isActive]);
+  await connection.execute('INSERT IGNORE INTO stock_balances (product_sku_id, quantity) VALUES (?, 0)', [result.insertId]);
   return result.insertId;
 }
 

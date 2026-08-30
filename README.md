@@ -4,11 +4,11 @@ ERP/POS monolítico e integrado para a NM Calçados, com backend Node.js/Express
 
 ## Estado atual
 
-**FASE 5 — Variantes, cores, tamanhos e SKUs concluída.**
+**FASE 6 — Controle transacional de estoque concluída.**
 
-Já existem bootstrap Express, conexão MySQL, migrations versionadas, autenticação por sessão persistida no MySQL, bcrypt, múltiplos cargos e permissões por usuário, auditoria, gestão de usuários, categorias, marcas, produtos, imagens e a grade comercial por cor/tamanho/SKU.
+Já existem bootstrap Express, conexão MySQL, migrations versionadas, autenticação por sessão persistida no MySQL, bcrypt, múltiplos cargos/permissões por usuário, auditoria, gestão de usuários, categorias, marcas, produtos, imagens, grade comercial por cor/tamanho/SKU e estoque rastreável por SKU.
 
-O produto agora segue a hierarquia `produto → variante/cor → tamanho/SKU`. O saldo e o histórico de movimentações permanecem reservados para a FASE 6 — Estoque.
+O estoque usa `stock_balances` como saldo de leitura e `stock_movements` como histórico imutável. Entradas, saídas, perdas e ajustes físicos são transacionais, idempotentes e impedem saldo negativo.
 
 ## Execução local
 
@@ -20,6 +20,7 @@ cp .env.example .env
 npm run db:check
 npm run db:migrate
 npm run auth:bootstrap-admin
+npm test
 npm run dev
 ```
 
@@ -39,18 +40,22 @@ No Windows: `Copy-Item .env.example .env`.
 
 O cookie é HTTP-only e `secure` em produção. A sessão fica no MySQL. Autorizações são verificadas no backend em cada requisição autenticada. Usuários podem acumular cargos e permissões diretas. Consulte `docs/AUTENTICACAO.md`.
 
-Uploads de produtos aceitam apenas JPEG, PNG e WebP com limites de tamanho/quantidade e validação da assinatura binária. Os arquivos enviados não são versionados no Git.
+Uploads de produtos aceitam somente JPEG, PNG e WebP com limites e validação da assinatura binária. Arquivos enviados não são versionados no Git.
 
 ## Banco
 
-Migrations ficam em `src/database/migrations/` e são controladas por `schema_migrations` com checksum. Não altere migrations já aplicadas. A FASE 5 reutiliza as tabelas de grade já criadas em `002_products_and_inventory.sql`, portanto não exige nova migration estrutural. Consulte `docs/BANCO_DE_DADOS.md`.
+Migrations ficam em `src/database/migrations/` e são controladas por `schema_migrations` com checksum. Não altere migrations já aplicadas.
 
-## Produtos e grade
+A FASE 6 adiciona a migration `009_stock_phase6.sql`, que registra os tipos oficiais, `stock.read`, idempotência das movimentações, inicialização dos saldos e proteção de imutabilidade do ledger.
+
+## Módulos disponíveis
 
 - Produtos: `/pages/products.html`
 - Grade: `/pages/grade.html`
+- Estoque: `/pages/stock.html`
 - Regras de produtos: `docs/PRODUTOS.md`
 - Regras de variantes/SKUs: `docs/GRADE_PRODUTOS.md`
+- Regras de estoque: `docs/ESTOQUE.md`
 
 ## Produção / Hostinger
 
@@ -58,4 +63,4 @@ Use credenciais exclusivas no ambiente, `NODE_ENV=production`, `SESSION_SECRET` 
 
 ## Próxima fase
 
-**FASE 6 — Estoque.**
+**FASE 7 — Clientes.**
