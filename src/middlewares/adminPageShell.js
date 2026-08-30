@@ -20,30 +20,24 @@ const ADMIN_HTML_FILES = new Set([
   'users.html'
 ]);
 
-const SHELL_VERSION = '20260830-5';
-const STYLE_TAG = `<link rel="stylesheet" href="/css/admin-shell.css?v=${SHELL_VERSION}" data-nm-admin-shell>`;
-const THEME_STYLE_TAG = `<link rel="stylesheet" href="/css/bankdash-theme.css?v=${SHELL_VERSION}" data-nm-bankdash-shell>`;
-const UX_STYLE_TAG = `<link rel="stylesheet" href="/css/ux-navigation.css?v=${SHELL_VERSION}" data-nm-ux-shell>`;
-const SCRIPT_TAG = `<script src="/js/admin-shell.js?v=${SHELL_VERSION}" defer data-nm-admin-shell></script>`;
-const POLISH_SCRIPT_TAG = `<script src="/js/ui-polish.js?v=${SHELL_VERSION}" defer data-nm-bankdash-shell></script>`;
-const UX_SCRIPT_TAG = `<script src="/js/ux-navigation.js?v=${SHELL_VERSION}" defer data-nm-ux-shell></script>`;
+const SHELL_VERSION = '20260830-6';
+const DESIGN_STYLE_TAG = `<link rel="stylesheet" href="/css/design-system.css?v=${SHELL_VERSION}" data-nm-design-system>`;
+const SHELL_STYLE_TAG = `<link rel="stylesheet" href="/css/admin-shell.css?v=${SHELL_VERSION}" data-nm-admin-shell-style>`;
+const SHELL_SCRIPT_TAG = `<script src="/js/admin-shell.js?v=${SHELL_VERSION}" defer data-nm-admin-shell-script></script>`;
+
+const MANAGED_ASSET_PATTERNS = [
+  /\s*<link[^>]+href=["']\/css\/(?:design-system|admin-shell|bankdash-theme|ux-navigation)\.css(?:\?[^"']*)?["'][^>]*>\s*/gi,
+  /\s*<script[^>]+src=["']\/js\/(?:admin-shell|ui-polish|ux-navigation)\.js(?:\?[^"']*)?["'][^>]*><\/script>\s*/gi
+];
+
+function stripManagedAssets(html) {
+  return MANAGED_ASSET_PATTERNS.reduce((result, pattern) => result.replace(pattern, '\n'), String(html || ''));
+}
 
 function injectAdminAssets(html) {
-  let result = String(html || '');
-
-  if (!result.includes('data-nm-admin-shell')) {
-    result = result.replace('</head>', `  ${STYLE_TAG}\n</head>`);
-    result = result.replace('</body>', `  ${SCRIPT_TAG}\n</body>`);
-  }
-  if (!result.includes('data-nm-bankdash-shell')) {
-    result = result.replace('</head>', `  ${THEME_STYLE_TAG}\n</head>`);
-    result = result.replace('</body>', `  ${POLISH_SCRIPT_TAG}\n</body>`);
-  }
-  if (!result.includes('data-nm-ux-shell')) {
-    result = result.replace('</head>', `  ${UX_STYLE_TAG}\n</head>`);
-    result = result.replace('</body>', `  ${UX_SCRIPT_TAG}\n</body>`);
-  }
-
+  let result = stripManagedAssets(html);
+  result = result.replace('</head>', `  ${DESIGN_STYLE_TAG}\n  ${SHELL_STYLE_TAG}\n</head>`);
+  result = result.replace('</body>', `  ${SHELL_SCRIPT_TAG}\n</body>`);
   return result;
 }
 
