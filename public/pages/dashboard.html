@@ -8,146 +8,95 @@
   <link rel="stylesheet" href="/css/dashboard.css">
 </head>
 <body class="admin-body" data-page="dashboard">
-<div class="app-frame">
-  <aside id="app-sidebar" class="app-sidebar">
-    <div class="sidebar-brand">
-      <div class="brand-mark" aria-hidden="true">NM</div>
-      <div class="sidebar-brand-copy"><strong>NM Calçados</strong><span>Gestão integrada</span></div>
+<main class="dashboard-shell">
+  <header class="dashboard-page-header">
+    <div>
+      <p class="eyebrow">Visão geral</p>
+      <h1>Dashboard executivo</h1>
+      <p class="subtitle">Vendas, caixa, estoque e financeiro reunidos para decisões rápidas da operação.</p>
     </div>
+    <div class="page-actions">
+      <a class="secondary-link" href="/pages/reports.html" data-permission="reports.read">Abrir relatórios</a>
+      <a class="primary-button" href="/pages/pos.html" data-permission="sales.read">Nova venda</a>
+    </div>
+  </header>
 
-    <nav aria-label="Navegação principal">
-      <section class="sidebar-section">
-        <p class="sidebar-label">Visão geral</p>
-        <div class="app-nav">
-          <a class="app-nav-link" href="/pages/dashboard.html" data-permission="dashboard.read" aria-current="page"><span class="nav-dot"></span>Dashboard</a>
-          <a class="app-nav-link" href="/pages/reports.html" data-permission="reports.read"><span class="nav-dot"></span>Relatórios</a>
-        </div>
-      </section>
-
-      <section class="sidebar-section">
-        <p class="sidebar-label">Operação</p>
-        <div class="app-nav">
-          <a class="app-nav-link" href="/pages/pos.html" data-permission="sales.read"><span class="nav-dot"></span>PDV</a>
-          <a class="app-nav-link" href="/pages/cash.html" data-permission="cash.read"><span class="nav-dot"></span>Caixa</a>
-          <a class="app-nav-link" href="/pages/catalog-orders.html" data-permission="catalog.orders.read"><span class="nav-dot"></span>Pedidos do catálogo</a>
-          <a class="app-nav-link" href="/catalog/"><span class="nav-dot"></span>Catálogo público</a>
-        </div>
-      </section>
-
-      <section class="sidebar-section">
-        <p class="sidebar-label">Comercial</p>
-        <div class="app-nav">
-          <a class="app-nav-link" href="/pages/products.html" data-permission="products.read"><span class="nav-dot"></span>Produtos</a>
-          <a class="app-nav-link" href="/pages/grade.html" data-permission="products.read"><span class="nav-dot"></span>Grade</a>
-          <a class="app-nav-link" href="/pages/stock.html" data-permission="stock.read"><span class="nav-dot"></span>Estoque</a>
-          <a class="app-nav-link" href="/pages/customers.html" data-permission="customers.read"><span class="nav-dot"></span>Clientes</a>
-          <a class="app-nav-link" href="/pages/suppliers.html" data-permission="suppliers.read"><span class="nav-dot"></span>Fornecedores</a>
-          <a class="app-nav-link" href="/pages/purchases.html" data-permission="purchases.read"><span class="nav-dot"></span>Compras</a>
-        </div>
-      </section>
-
-      <section class="sidebar-section">
-        <p class="sidebar-label">Gestão</p>
-        <div class="app-nav">
-          <a class="app-nav-link" href="/pages/finance.html" data-permission="finance.read"><span class="nav-dot"></span>Financeiro</a>
-          <a class="app-nav-link" href="/pages/imports.html" data-permission="imports.read"><span class="nav-dot"></span>Importações</a>
-          <a class="app-nav-link" href="/pages/users.html" data-permission="users.read"><span class="nav-dot"></span>Usuários</a>
-        </div>
-      </section>
-    </nav>
-
-    <footer class="sidebar-footer">
-      <div class="sidebar-user"><strong id="shell-user-name">Usuário</strong><span id="shell-user-role">Carregando sessão...</span></div>
-      <button id="shell-logout" class="sidebar-logout" type="button">Encerrar sessão</button>
-    </footer>
-  </aside>
-
-  <button id="nav-backdrop" class="nav-backdrop" type="button" aria-label="Fechar menu"></button>
-
-  <div class="app-main">
-    <header class="app-topbar">
-      <div style="display:flex;align-items:center;gap:11px">
-        <button id="nav-toggle" class="nav-toggle" type="button" aria-label="Abrir menu">☰</button>
-        <div class="topbar-context"><strong>Área administrativa</strong><span>Operação e indicadores da loja</span></div>
+  <section class="dashboard-filter-card admin-card" aria-label="Período do dashboard">
+    <div class="dashboard-filter-heading">
+      <div><strong>Período analisado</strong><span id="period-label" class="muted"></span></div>
+      <div class="preset-actions" aria-label="Períodos rápidos">
+        <button type="button" class="secondary-button preset" data-days="7">7 dias</button>
+        <button type="button" class="secondary-button preset" data-days="30">30 dias</button>
+        <button type="button" class="secondary-button preset" data-days="90">90 dias</button>
       </div>
-      <div class="topbar-actions"><span class="topbar-pill">Sistema disponível</span></div>
-    </header>
+    </div>
+    <form id="dashboard-filter" class="dashboard-filter">
+      <label>De<input id="date-from" name="dateFrom" type="date"></label>
+      <label>Até<input id="date-to" name="dateTo" type="date"></label>
+      <button class="primary-button" type="submit">Atualizar indicadores</button>
+    </form>
+    <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+  </section>
 
-    <main class="dashboard-shell">
-      <header class="dashboard-page-header">
-        <div>
-          <p class="eyebrow">Visão geral</p>
-          <h1>Dashboard executivo</h1>
-          <p class="subtitle">Acompanhe vendas, estoque, compras, caixa e financeiro em uma única visão.</p>
-        </div>
-      </header>
+  <section class="dashboard-section" aria-labelledby="business-title">
+    <div class="dashboard-section-heading">
+      <div><p class="eyebrow">Desempenho</p><h2 id="business-title">Resultado comercial</h2></div>
+      <span class="muted">Comparação automática com o período anterior equivalente</span>
+    </div>
+    <div class="kpi-grid kpi-grid-primary" aria-label="Indicadores comerciais">
+      <article class="kpi-card is-primary"><span>Faturamento</span><strong id="kpi-revenue">—</strong><small id="cmp-revenue"></small></article>
+      <article class="kpi-card"><span>Vendas concluídas</span><strong id="kpi-sales">—</strong><small id="cmp-sales"></small></article>
+      <article class="kpi-card"><span>Ticket médio</span><strong id="kpi-ticket">—</strong><small id="cmp-ticket"></small></article>
+      <article class="kpi-card"><span>Fluxo líquido</span><strong id="kpi-net">—</strong><small>Recebimentos − pagamentos</small></article>
+    </div>
+    <div class="kpi-grid kpi-grid-secondary" aria-label="Indicadores operacionais">
+      <article class="kpi-card compact"><span>Unidades vendidas</span><strong id="kpi-units">—</strong><small id="cmp-units"></small></article>
+      <article class="kpi-card compact"><span>Recebimentos</span><strong id="kpi-receipts">—</strong><small>No período</small></article>
+      <article class="kpi-card compact"><span>Pagamentos</span><strong id="kpi-disbursements">—</strong><small>No período</small></article>
+      <article class="kpi-card compact"><span>Caixas abertos</span><strong id="kpi-open-cash">—</strong><small id="kpi-expected-cash"></small></article>
+    </div>
+  </section>
 
-      <section class="admin-card dashboard-filter-card">
-        <form id="dashboard-filter" class="dashboard-filter">
-          <div class="preset-actions">
-            <button type="button" class="secondary-button preset" data-days="7">7 dias</button>
-            <button type="button" class="secondary-button preset" data-days="30">30 dias</button>
-            <button type="button" class="secondary-button preset" data-days="90">90 dias</button>
-          </div>
-          <label>De<input id="date-from" name="dateFrom" type="date"></label>
-          <label>Até<input id="date-to" name="dateTo" type="date"></label>
-          <button class="primary-button" type="submit">Atualizar</button>
-        </form>
-        <p id="period-label" class="muted"></p>
-        <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
-      </section>
+  <section class="dashboard-analytics-grid" aria-label="Análises do período">
+    <article class="admin-card dashboard-chart-card">
+      <div class="section-heading"><div><h2>Faturamento por dia</h2><p class="muted">Somente vendas concluídas no período selecionado.</p></div><a class="text-button" href="/pages/reports.html" data-permission="reports.read">Detalhar</a></div>
+      <div id="sales-chart" class="chart-box" aria-label="Gráfico de faturamento por dia"></div>
+    </article>
+    <article class="admin-card dashboard-payment-card">
+      <div class="section-heading"><div><h2>Formas de pagamento</h2><p class="muted">Participação sobre os recebimentos vinculados às vendas.</p></div></div>
+      <div id="payment-mix" class="bar-list"></div>
+    </article>
+  </section>
 
-      <section class="kpi-grid" aria-label="Indicadores principais">
-        <article class="kpi-card is-primary"><span>Faturamento</span><strong id="kpi-revenue">—</strong><small id="cmp-revenue"></small></article>
-        <article class="kpi-card is-positive"><span>Vendas</span><strong id="kpi-sales">—</strong><small id="cmp-sales"></small></article>
-        <article class="kpi-card"><span>Ticket médio</span><strong id="kpi-ticket">—</strong><small id="cmp-ticket"></small></article>
-        <article class="kpi-card"><span>Unidades vendidas</span><strong id="kpi-units">—</strong><small id="cmp-units"></small></article>
-        <article class="kpi-card is-positive"><span>Recebimentos</span><strong id="kpi-receipts">—</strong><small>No período</small></article>
-        <article class="kpi-card is-warning"><span>Pagamentos</span><strong id="kpi-disbursements">—</strong><small>No período</small></article>
-        <article class="kpi-card is-primary"><span>Fluxo líquido</span><strong id="kpi-net">—</strong><small>Recebimentos − pagamentos</small></article>
-        <article class="kpi-card"><span>Caixas abertos</span><strong id="kpi-open-cash">—</strong><small id="kpi-expected-cash"></small></article>
-      </section>
+  <section class="dashboard-operation-grid" aria-label="Situação operacional">
+    <article class="admin-card">
+      <div class="section-heading"><div><h2>Estoque em atenção</h2><p class="muted">Visão rápida do valor e dos SKUs que precisam de ação.</p></div><a class="text-button" href="/pages/stock.html" data-permission="stock.read">Abrir estoque</a></div>
+      <div id="stock-summary" class="mini-grid"></div>
+      <div class="table-wrap"><table><thead><tr><th>SKU</th><th>Produto</th><th>Grade</th><th class="numeric">Saldo</th><th class="numeric">Mín.</th></tr></thead><tbody id="low-stock-body"></tbody></table></div>
+    </article>
+    <article class="admin-card alerts-card">
+      <div class="section-heading"><div><h2>Alertas e pendências</h2><p class="muted">Itens que merecem prioridade no dia.</p></div></div>
+      <div id="alerts-list" class="alerts-list"></div>
+      <div id="purchases-summary" class="summary-box"></div>
+    </article>
+  </section>
 
-      <section class="dashboard-two-columns">
-        <article class="admin-card">
-          <div class="section-heading"><div><h2>Vendas por dia</h2><p class="muted">Somente vendas concluídas.</p></div></div>
-          <div id="sales-chart" class="chart-box" aria-label="Gráfico de faturamento por dia"></div>
-        </article>
-        <article class="admin-card">
-          <div class="section-heading"><div><h2>Formas de pagamento</h2><p class="muted">Alocações confirmadas das vendas do período.</p></div></div>
-          <div id="payment-mix" class="bar-list"></div>
-        </article>
-      </section>
+  <section class="dashboard-operation-grid" aria-label="Produtos e financeiro">
+    <article class="admin-card">
+      <div class="section-heading"><div><h2>Produtos mais vendidos</h2><p class="muted">Ranking do período por unidades e faturamento.</p></div></div>
+      <div class="table-wrap"><table><thead><tr><th>Produto</th><th class="numeric">Unidades</th><th class="money">Faturamento</th></tr></thead><tbody id="top-products-body"></tbody></table></div>
+    </article>
+    <article class="admin-card">
+      <div class="section-heading"><div><h2>Posição financeira</h2><p class="muted">Obrigações abertas e valores vencidos.</p></div><a class="text-button" href="/pages/finance.html" data-permission="finance.read">Abrir financeiro</a></div>
+      <div id="finance-summary" class="finance-grid"></div>
+    </article>
+  </section>
 
-      <section class="dashboard-two-columns equal">
-        <article class="admin-card">
-          <h2>Estoque</h2>
-          <div id="stock-summary" class="mini-grid"></div>
-          <div class="table-wrap"><table><thead><tr><th>SKU</th><th>Produto</th><th>Grade</th><th>Saldo</th><th>Mín.</th></tr></thead><tbody id="low-stock-body"></tbody></table></div>
-        </article>
-        <article class="admin-card">
-          <h2>Alertas</h2>
-          <div id="alerts-list" class="alerts-list"></div>
-          <div id="purchases-summary" class="summary-box"></div>
-        </article>
-      </section>
-
-      <section class="dashboard-two-columns equal">
-        <article class="admin-card">
-          <h2>Produtos mais vendidos</h2>
-          <div class="table-wrap"><table><thead><tr><th>Produto</th><th>Unidades</th><th>Faturamento</th></tr></thead><tbody id="top-products-body"></tbody></table></div>
-        </article>
-        <article class="admin-card"><h2>Financeiro</h2><div id="finance-summary" class="finance-grid"></div></article>
-      </section>
-
-      <section class="admin-card">
-        <h2>Vendas recentes</h2>
-        <div class="table-wrap"><table><thead><tr><th>Venda</th><th>Cliente</th><th>Vendedor</th><th>Unidades</th><th>Total</th><th>Data</th></tr></thead><tbody id="recent-sales-body"></tbody></table></div>
-      </section>
-    </main>
-  </div>
-</div>
-<script src="/js/admin-shell.js" defer></script>
+  <section class="admin-card dashboard-recent-sales nm-table-card">
+    <div class="section-heading"><div><h2>Vendas recentes</h2><p class="muted">Últimas vendas concluídas disponíveis no recorte atual.</p></div><a class="text-button" href="/pages/pos.html" data-permission="sales.read">Ver vendas</a></div>
+    <div class="table-wrap"><table><thead><tr><th>Venda</th><th>Cliente</th><th>Vendedor</th><th class="numeric">Unidades</th><th class="money">Total</th><th>Data</th></tr></thead><tbody id="recent-sales-body"></tbody></table></div>
+  </section>
+</main>
 <script src="/js/dashboard.js" defer></script>
 </body>
 </html>
