@@ -1,0 +1,10 @@
+'use strict';
+const test=require('node:test');const assert=require('node:assert/strict');const {calculateSaleLine,calculateSaleTotal,normalizeCancellationReason,normalizeOperationKey,normalizePricing,normalizeSaleItem,stockOperationKey}=require('../src/utils/saleValidation');
+test('calcula linha sem desconto',()=>assert.deepEqual(calculateSaleLine('149.90',2,'0.00'),{originalUnitPrice:'149.90',discountAmount:'0.00',effectiveUnitPrice:'149.90',lineTotal:'299.80'}));
+test('calcula desconto total por linha em centavos',()=>{const l=calculateSaleLine('100.00',3,'10.00');assert.equal(l.lineTotal,'290.00');assert.equal(l.effectiveUnitPrice,'96.67');});
+test('impede desconto do item maior que a linha',()=>assert.throws(()=>calculateSaleLine('10.00',1,'10.01'),/Desconto do item/));
+test('calcula total com desconto e acréscimo',()=>assert.equal(calculateSaleTotal('300.00','20.00','5.00'),'285.00'));
+test('normaliza item e quantidade',()=>assert.deepEqual(normalizeSaleItem({skuId:'12',quantity:'3'}),{skuId:12,quantity:3}));
+test('valida chave idempotente',()=>{assert.equal(normalizeOperationKey('sale-finalize:123456'),'sale-finalize:123456');assert.throws(()=>normalizeOperationKey('curta'),/Chave da operação/);});
+test('gera chave de estoque determinística por item e tipo',()=>{const a=stockOperationKey('sale-finalize:123456',10,'SALE'),b=stockOperationKey('sale-finalize:123456',10,'SALE'),c=stockOperationKey('sale-finalize:123456',10,'SALE_CANCEL');assert.equal(a,b);assert.notEqual(a,c);assert.equal(a.length,64);});
+test('valida precificação e motivo de cancelamento',()=>{assert.deepEqual(normalizePricing({discountAmount:'5,5',surchargeAmount:'1'}),{discountAmount:'5.50',surchargeAmount:'1.00'});assert.equal(normalizeCancellationReason('Cliente desistiu'),'Cliente desistiu');});

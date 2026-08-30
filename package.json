@@ -1,1 +1,25 @@
-{"name":"nm-calcados","version":"0.8.0","private":true,"description":"ERP/POS integrado da NM Calçados.","main":"server.js","scripts":{"start":"node server.js","dev":"node --watch server.js","check":"node scripts/check-syntax.js","test":"node --test","db:check":"node scripts/check-db.js","db:migrate":"node src/database/migrate.js","auth:bootstrap-admin":"node scripts/bootstrap-admin.js"},"engines":{"node":">=20"},"dependencies":{"bcrypt":"^6.0.0","dotenv":"^17.4.2","express":"^5.2.1","express-session":"^1.19.0","multer":"^2.3.0","mysql2":"^3.24.2"}}
+{
+  "name": "nm-calcados",
+  "version": "0.9.0",
+  "private": true,
+  "description": "ERP/POS integrado da NM Calçados.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "check": "node scripts/check-syntax.js",
+    "test": "node --test",
+    "db:check": "node scripts/check-db.js",
+    "db:migrate": "node src/database/migrate.js",
+    "auth:bootstrap-admin": "node scripts/bootstrap-admin.js"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "multer": "^2.3.0",
+    "mysql2": "^3.24.2"
+  }
+}

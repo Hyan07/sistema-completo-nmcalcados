@@ -4,11 +4,11 @@ ERP/POS monolítico e integrado para a NM Calçados, com backend Node.js/Express
 
 ## Estado atual
 
-**FASE 8 — Fornecedores e compras concluída.**
+**FASE 9 — PDV e vendas concluída.**
 
-Já existem autenticação e permissões, auditoria, produtos, grade por cor/tamanho/SKU, estoque transacional, clientes, fornecedores e compras com recebimento físico parcial/total integrado ao estoque.
+Já existem autenticação e permissões, auditoria, produtos, grade por cor/tamanho/SKU, estoque transacional, clientes, fornecedores, compras/recebimentos e PDV com venda em rascunho, finalização e cancelamento integrado ao estoque.
 
-A regra comercial permanece explícita: cadastrar ou confirmar um pedido de compra não aumenta estoque. Somente um recebimento confirmado gera `PURCHASE_RECEIPT`. Pagamento ao fornecedor não é criado nesta fase.
+A venda mantém separação rigorosa entre operação comercial e financeiro: rascunho não baixa estoque; finalizar gera `SALE` por item dentro da mesma transação; cancelar venda concluída e ainda sem vínculos financeiros gera `SALE_CANCEL`. Pagamentos e caixa serão implementados na FASE 10.
 
 ## Execução local
 
@@ -30,10 +30,11 @@ npm run dev
 - Clientes: `/pages/customers.html`
 - Fornecedores: `/pages/suppliers.html`
 - Compras: `/pages/purchases.html`
+- PDV/Vendas: `/pages/pos.html`
 - Usuários: `/pages/users.html`
 
-A FASE 8 adiciona `011_suppliers_purchases_phase8.sql`, com permissões de consulta/recebimento, trilha de usuário em fornecedores/compras, cancelamento lógico de itens e ledger imutável de recebimentos.
+A FASE 9 adiciona `012_sales_phase9.sql`, permissões `sales.read` e `sales.discount`, trilha de finalização/cancelamento idempotente e itens de venda com cancelamento lógico em rascunho.
 
 ## Próxima fase
 
-**FASE 9 — PDV e vendas.**
+**FASE 10 — Caixa e formas de pagamento.**

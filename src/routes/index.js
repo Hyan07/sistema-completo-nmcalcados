@@ -12,6 +12,7 @@ const stockRoutes = require('./stockRoutes');
 const customerRoutes = require('./customerRoutes');
 const supplierRoutes = require('./supplierRoutes');
 const purchaseRoutes = require('./purchaseRoutes');
+const saleRoutes = require('./saleRoutes');
 
 const router = express.Router();
 router.get('/health', (req, res) => { res.status(200).json({ status: 'ok', application: 'nm-calcados' }); });
@@ -26,4 +27,5 @@ router.use('/stock', stockRoutes);
 router.use('/customers', customerRoutes);
 router.use('/suppliers', supplierRoutes);
 router.use('/purchases', purchaseRoutes);
+router.use('/sales', saleRoutes);
 module.exports = router;
