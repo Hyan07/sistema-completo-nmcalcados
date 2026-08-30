@@ -38,6 +38,11 @@ function createApp() {
     res.sendFile(path.join(publicDir, 'catalog', 'index.html'));
   });
 
+  // Mantém links antigos funcionando, mas consolida a loja na URL principal.
+  app.get('/catalog', (req, res) => {
+    res.redirect(302, '/');
+  });
+
   // Entrada administrativa explícita, separada da experiência de compra.
   app.get('/admin', (req, res) => {
     res.sendFile(path.join(publicDir, 'index.html'));
