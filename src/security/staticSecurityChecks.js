@@ -36,7 +36,7 @@ function runStaticSecurityChecks(root = process.cwd()) {
   }
 
   const routeDir = path.join(root, 'src', 'routes');
-  const publicExceptions = new Set(['authRoutes.js', 'publicCatalogRoutes.js', 'gradeRoutes.js']);
+  const publicExceptions = new Set(['authRoutes.js', 'publicCatalogRoutes.js', 'gradeRoutes.js', 'healthRoutes.js']);
   for (const file of walk(routeDir).filter((item) => item.endsWith('Routes.js'))) {
     const name = path.basename(file);
     if (publicExceptions.has(name)) continue;
@@ -47,17 +47,13 @@ function runStaticSecurityChecks(root = process.cwd()) {
   const productRoutesFile = path.join(routeDir, 'productRoutes.js');
   if (fs.existsSync(productRoutesFile)) {
     const text = readUtf8(productRoutesFile);
-    if (!/router\.use\(authenticate\)/.test(text) || !/router\.use\(['"]\/:productId\/grade['"],\s*gradeRoutes\)/.test(text)) {
-      findings.push(finding('NESTED_GRADE_AUTH_MISSING', 'src/routes/productRoutes.js', 'gradeRoutes deve permanecer montado após authenticate no productRoutes.'));
-    }
+    if (!/router\.use\(authenticate\)/.test(text) || !/router\.use\(['"]\/:productId\/grade['"],\s*gradeRoutes\)/.test(text)) findings.push(finding('NESTED_GRADE_AUTH_MISSING', 'src/routes/productRoutes.js', 'gradeRoutes deve permanecer montado após authenticate no productRoutes.'));
   }
 
   const publicCatalogFile = path.join(routeDir, 'publicCatalogRoutes.js');
   if (fs.existsSync(publicCatalogFile)) {
     const text = readUtf8(publicCatalogFile);
-    for (const required of ['catalogRateLimit', 'catalogOrderCreateRateLimit', 'catalogOrderTrackRateLimit']) {
-      if (!text.includes(required)) findings.push(finding('PUBLIC_RATE_LIMIT_MISSING', 'src/routes/publicCatalogRoutes.js', `Proteção pública ausente: ${required}.`));
-    }
+    for (const required of ['catalogRateLimit', 'catalogOrderCreateRateLimit', 'catalogOrderTrackRateLimit']) if (!text.includes(required)) findings.push(finding('PUBLIC_RATE_LIMIT_MISSING', 'src/routes/publicCatalogRoutes.js', `Proteção pública ausente: ${required}.`));
   }
 
   const authFile = path.join(routeDir, 'authRoutes.js');
@@ -70,9 +66,7 @@ function runStaticSecurityChecks(root = process.cwd()) {
   for (const file of walk(srcDir).filter((item) => item.endsWith('.js'))) {
     const relative = path.relative(root, file).replaceAll(path.sep, '/');
     const text = readUtf8(file);
-    if (/UPDATE\s+stock_balances\s+SET\s+quantity/i.test(text) && relative !== 'src/repositories/stockRepository.js') {
-      findings.push(finding('STOCK_LEDGER_BYPASS', relative, 'Alteração direta de stock_balances fora do stockRepository.'));
-    }
+    if (/UPDATE\s+stock_balances\s+SET\s+quantity/i.test(text) && relative !== 'src/repositories/stockRepository.js') findings.push(finding('STOCK_LEDGER_BYPASS', relative, 'Alteração direta de stock_balances fora do stockRepository.'));
     if (/\b(?:UPDATE|DELETE\s+FROM)\s+stock_movements\b/i.test(text)) findings.push(finding('STOCK_MOVEMENT_MUTATION', relative, 'Ledger de stock_movements deve ser imutável.'));
   }
 

@@ -4,11 +4,11 @@ ERP/POS monolítico e integrado para a NM Calçados, com backend Node.js/Express
 
 ## Estado atual
 
-**FASE 18 — Testes, Segurança e Revisão de Fluxos concluída.**
+**FASE 19 — Preparação e Deploy Hostinger concluída no repositório.**
 
-O sistema possui autenticação/RBAC, produtos e grade, estoque transacional, clientes, fornecedores/compras, PDV/vendas, caixa, financeiro, dashboard, relatórios, catálogo público, pedidos/reservas, importação controlada e auditoria de integridade.
+O sistema possui autenticação/RBAC, produtos e grade, estoque transacional, clientes, fornecedores/compras, PDV/vendas, caixa, financeiro, dashboard, relatórios, catálogo público, pedidos/reservas, importação controlada, auditoria de integridade e hardening de segurança.
 
-A FASE 18 adiciona headers HTTP/CSP, validação de origem para mutações, rate limit global, validação de Content-Type, request-id, logs 5xx sanitizados e checks estáticos de regressão de segurança.
+A FASE 19 fixa Node.js 24, fixa dependências diretas, adiciona health/readiness de produção, status de migrations, verificação pré-deploy e documentação específica para Hostinger.
 
 ## Execução local
 
@@ -17,7 +17,7 @@ npm install
 cp .env.example .env
 npm run verify
 npm run db:check
-npm run audit:integrity
+npm run db:status
 npm run db:migrate
 npm run audit:integrity
 npm run dev
@@ -25,21 +25,33 @@ npm run dev
 
 No Windows: `Copy-Item .env.example .env`.
 
+## Produção / Hostinger
+
+Consulte `docs/DEPLOY_HOSTINGER.md`.
+
+Comandos principais:
+
+```bash
+npm run build
+npm run db:status
+npm run deploy:check
+npm run audit:integrity
+```
+
+Health checks:
+
+- `/api/health/live` — processo Express;
+- `/api/health/ready` — MySQL + migrations.
+
 ## Segurança
 
 ```bash
 npm run verify
-npm run security:check
 npm run security:deps
 npm run audit:integrity
 ```
 
-- `verify`: sintaxe + testes + check estático de segurança;
-- `security:check`: invariantes arquiteturais sem acessar banco;
-- `security:deps`: `npm audit` das dependências instaladas;
-- `audit:integrity`: consistência transacional do MySQL.
-
-Em produção, `APP_ORIGIN` é obrigatório. Consulte `docs/SEGURANCA_TESTES.md` e `docs/AUDITORIA_SISTEMA.md`.
+Consulte `docs/SEGURANCA_TESTES.md` e `docs/AUDITORIA_SISTEMA.md`.
 
 ## Módulos disponíveis
 
@@ -63,8 +75,8 @@ Em produção, `APP_ORIGIN` é obrigatório. Consulte `docs/SEGURANCA_TESTES.md`
 
 Migrations ficam em `src/database/migrations/` e são controladas por `schema_migrations` com checksum. Não altere migrations já aplicadas.
 
-A FASE 18 não cria migration: as alterações são de segurança HTTP, testes e ferramentas de verificação. A migration estrutural mais recente continua sendo `020_integrity_audit_phase17.sql`.
+A última migration estrutural é `020_integrity_audit_phase17.sql`. A FASE 19 não adiciona migration.
 
 ## Próxima fase
 
-**FASE 19 — Deploy na Hostinger.**
+**FASE 20 — Homologação e entrada em produção.**
