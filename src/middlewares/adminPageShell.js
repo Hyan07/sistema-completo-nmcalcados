@@ -20,15 +20,17 @@ const ADMIN_HTML_FILES = new Set([
   'users.html'
 ]);
 
-const SHELL_VERSION = '20260830-3';
+const SHELL_VERSION = '20260830-4';
 const STYLE_TAG = `<link rel="stylesheet" href="/css/admin-shell.css?v=${SHELL_VERSION}" data-nm-admin-shell>`;
+const THEME_STYLE_TAG = `<link rel="stylesheet" href="/css/bankdash-theme.css?v=${SHELL_VERSION}" data-nm-bankdash-shell>`;
 const SCRIPT_TAG = `<script src="/js/admin-shell.js?v=${SHELL_VERSION}" defer data-nm-admin-shell></script>`;
+const POLISH_SCRIPT_TAG = `<script src="/js/ui-polish.js?v=${SHELL_VERSION}" defer data-nm-bankdash-shell></script>`;
 
 function injectAdminAssets(html) {
   let result = String(html || '');
-  if (!result.includes('data-nm-admin-shell')) {
-    result = result.replace('</head>', `  ${STYLE_TAG}\n</head>`);
-    result = result.replace('</body>', `  ${SCRIPT_TAG}\n</body>`);
+  if (!result.includes('data-nm-bankdash-shell')) {
+    result = result.replace('</head>', `  ${STYLE_TAG}\n  ${THEME_STYLE_TAG}\n</head>`);
+    result = result.replace('</body>', `  ${SCRIPT_TAG}\n  ${POLISH_SCRIPT_TAG}\n</body>`);
   }
   return result;
 }
