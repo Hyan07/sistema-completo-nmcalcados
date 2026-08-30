@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NM Calçados | Fornecedores</title>
+  <link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/css/suppliers.css">
+</head>
+<body>
+<main class="admin-shell">
+  <header class="admin-header"><div><p class="eyebrow">NM Calçados</p><h1>Fornecedores</h1><p class="muted">Cadastro e consulta para compras.</p></div><div class="session-actions"><a class="secondary-link" href="/pages/purchases.html">Compras</a><a class="secondary-link" href="/">Voltar</a></div></header>
+  <section id="create-card" class="admin-card" hidden><h2>Novo fornecedor</h2><form id="supplier-form" class="supplier-form">
+    <label>Razão social / nome<input name="legalName" maxlength="180" required></label><label>Nome fantasia<input name="tradeName" maxlength="180"></label>
+    <label>CPF/CNPJ<input name="document" maxlength="20"></label><label>Contato<input name="contactName" maxlength="150"></label>
+    <label>Telefone<input name="phone" maxlength="20"></label><label>WhatsApp<input name="whatsapp" maxlength="20"></label><label>E-mail<input name="email" type="email" maxlength="190"></label>
+    <label>CEP<input name="postalCode" maxlength="12"></label><label>Logradouro<input name="street" maxlength="180"></label><label>Número<input name="streetNumber" maxlength="30"></label>
+    <label>Complemento<input name="addressComplement" maxlength="100"></label><label>Bairro<input name="neighborhood" maxlength="120"></label><label>Cidade<input name="city" maxlength="120"></label><label>UF<input name="state" maxlength="2"></label>
+    <label class="wide-field">Observações<textarea name="notes" maxlength="5000" rows="3"></textarea></label><button class="primary-button" type="submit">Cadastrar fornecedor</button>
+  </form></section>
+  <section class="admin-card"><div class="section-heading"><div><h2>Fornecedores cadastrados</h2><p id="supplier-count" class="muted"></p></div><button id="refresh" class="secondary-button" type="button">Atualizar</button></div>
+    <form id="filters" class="filter-bar"><input name="q" placeholder="Nome, documento, telefone ou e-mail"><select name="isActive"><option value="">Todos</option><option value="true">Ativos</option><option value="false">Inativos</option></select><button class="secondary-button">Filtrar</button></form>
+    <div class="table-wrap"><table><thead><tr><th>Fornecedor</th><th>Documento</th><th>Contato</th><th>Cidade</th><th>Status</th><th></th></tr></thead><tbody id="suppliers-body"></tbody></table></div>
+    <div class="pagination"><button id="prev" class="secondary-button" type="button">Anterior</button><span id="page-info" class="muted"></span><button id="next" class="secondary-button" type="button">Próxima</button></div><p id="feedback" class="feedback" role="status"></p>
+  </section>
+</main>
+<dialog id="supplier-dialog" class="wide-dialog"><form id="edit-form" method="dialog" class="supplier-form"><h2>Editar fornecedor</h2><input name="id" type="hidden">
+  <label>Razão social / nome<input name="legalName" maxlength="180" required></label><label>Nome fantasia<input name="tradeName" maxlength="180"></label><label>CPF/CNPJ<input name="document" maxlength="20"></label><label>Contato<input name="contactName" maxlength="150"></label>
+  <label>Telefone<input name="phone" maxlength="20"></label><label>WhatsApp<input name="whatsapp" maxlength="20"></label><label>E-mail<input name="email" type="email" maxlength="190"></label><label>CEP<input name="postalCode" maxlength="12"></label>
+  <label>Logradouro<input name="street" maxlength="180"></label><label>Número<input name="streetNumber" maxlength="30"></label><label>Complemento<input name="addressComplement" maxlength="100"></label><label>Bairro<input name="neighborhood" maxlength="120"></label><label>Cidade<input name="city" maxlength="120"></label><label>UF<input name="state" maxlength="2"></label>
+  <label>Status<select name="isActive"><option value="true">Ativo</option><option value="false">Inativo</option></select></label><label class="wide-field">Observações<textarea name="notes" maxlength="5000" rows="3"></textarea></label>
+  <div class="dialog-actions wide-field"><button id="cancel-edit" class="secondary-button" type="button">Cancelar</button><button class="primary-button" type="submit">Salvar</button></div>
+</form></dialog>
+<script src="/js/suppliers.js" defer></script>
+</body></html>

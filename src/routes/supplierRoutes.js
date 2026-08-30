@@ -1,0 +1,13 @@
+'use strict';
+const express=require('express');
+const controller=require('../controllers/supplierController');
+const {authenticate}=require('../middlewares/authenticate');
+const {authorize}=require('../middlewares/authorize');
+const router=express.Router();
+router.use(authenticate);
+router.get('/lookup',authorize('suppliers.read'),controller.lookup);
+router.get('/',authorize('suppliers.read'),controller.list);
+router.get('/:id',authorize('suppliers.read'),controller.getById);
+router.post('/',authorize('suppliers.manage'),controller.create);
+router.patch('/:id',authorize('suppliers.manage'),controller.update);
+module.exports=router;

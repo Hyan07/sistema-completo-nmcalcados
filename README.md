@@ -4,15 +4,13 @@ ERP/POS monolítico e integrado para a NM Calçados, com backend Node.js/Express
 
 ## Estado atual
 
-**FASE 7 — Clientes concluída.**
+**FASE 8 — Fornecedores e compras concluída.**
 
-Já existem autenticação e permissões, auditoria, produtos, grade por cor/tamanho/SKU, estoque transacional e cadastro de clientes com busca rápida e ficha comercial preparada para vendas/recebíveis.
+Já existem autenticação e permissões, auditoria, produtos, grade por cor/tamanho/SKU, estoque transacional, clientes, fornecedores e compras com recebimento físico parcial/total integrado ao estoque.
 
-Clientes não são excluídos fisicamente. CPF/CNPJ opcional é normalizado e validado quando informado, listagens mascaram o documento e dados pessoais não são duplicados no JSON de auditoria.
+A regra comercial permanece explícita: cadastrar ou confirmar um pedido de compra não aumenta estoque. Somente um recebimento confirmado gera `PURCHASE_RECEIPT`. Pagamento ao fornecedor não é criado nesta fase.
 
 ## Execução local
-
-Requisitos: Node.js 20+, npm e MySQL 8+.
 
 ```bash
 npm install
@@ -24,38 +22,18 @@ npm test
 npm run dev
 ```
 
-No Windows: `Copy-Item .env.example .env`.
-
-## Scripts
-
-- `npm start`
-- `npm run dev`
-- `npm run check`
-- `npm test`
-- `npm run db:check`
-- `npm run db:migrate`
-- `npm run auth:bootstrap-admin`
-
 ## Módulos disponíveis
 
 - Produtos: `/pages/products.html`
 - Grade: `/pages/grade.html`
 - Estoque: `/pages/stock.html`
 - Clientes: `/pages/customers.html`
+- Fornecedores: `/pages/suppliers.html`
+- Compras: `/pages/purchases.html`
 - Usuários: `/pages/users.html`
 
-Documentação: `docs/PRODUTOS.md`, `docs/GRADE_PRODUTOS.md`, `docs/ESTOQUE.md`, `docs/CLIENTES.md` e `docs/AUTENTICACAO.md`.
-
-## Banco
-
-Migrations ficam em `src/database/migrations/` e são controladas por `schema_migrations` com checksum. Não altere migrations já aplicadas.
-
-A FASE 7 adiciona `010_customers_phase7.sql`, com `customers.read`, índices de busca e referência do usuário que criou/alterou o cadastro.
-
-## Produção / Hostinger
-
-Use credenciais exclusivas no ambiente, `NODE_ENV=production`, `SESSION_SECRET` aleatório, remova `ADMIN_PASSWORD` após o bootstrap e aplique migrations antes de iniciar uma versão que dependa delas.
+A FASE 8 adiciona `011_suppliers_purchases_phase8.sql`, com permissões de consulta/recebimento, trilha de usuário em fornecedores/compras, cancelamento lógico de itens e ledger imutável de recebimentos.
 
 ## Próxima fase
 
-**FASE 8 — Fornecedores e compras.**
+**FASE 9 — PDV e vendas.**
