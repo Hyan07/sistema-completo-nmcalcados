@@ -10,60 +10,63 @@
 <body>
 <main class="admin-shell grade-shell">
   <header class="admin-header">
-    <div><p class="eyebrow">NM Calçados</p><h1>Grade de produtos</h1><p class="muted">Cores, tamanhos, variantes e SKUs.</p></div>
-    <div class="header-actions"><a class="secondary-link" href="/pages/products.html">Produtos</a><a class="secondary-link" href="/">Início</a></div>
+    <div><p class="eyebrow">Estoque</p><h1>Grade de produtos</h1><p class="muted">Transforme um produto comercial em combinações vendáveis de cor, tamanho e SKU.</p></div>
+    <div class="page-actions"><a class="secondary-link" href="/pages/products.html">Produtos</a><a class="secondary-link" href="/pages/stock.html">Estoque</a></div>
   </header>
 
-  <section class="admin-card">
-    <div class="section-heading"><div><h2>Selecionar produto</h2><p class="muted">Busque pelo nome, código interno ou modelo.</p></div></div>
-    <form id="product-search-form" class="filter-bar grade-product-picker">
-      <input name="q" maxlength="180" placeholder="Buscar produto">
+  <section class="admin-card grade-product-workspace">
+    <div class="section-heading"><div><h2>Selecione o produto</h2><p class="muted">A grade sempre é editada dentro do contexto de um produto específico.</p></div></div>
+    <form id="product-search-form" class="grade-product-picker">
+      <label class="grade-search-field">Pesquisar produto<input name="q" type="search" maxlength="180" placeholder="Nome, código interno ou modelo"></label>
       <button class="secondary-button" type="submit">Buscar</button>
-      <select id="product-select"><option value="">Selecione um produto</option></select>
+      <label class="grade-select-field">Produto encontrado<select id="product-select"><option value="">Selecione um produto</option></select></label>
       <button id="load-grade" class="primary-button" type="button">Abrir grade</button>
     </form>
     <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
   </section>
 
-  <section class="grade-master-grid">
-    <article class="admin-card">
-      <div class="section-heading"><div><h2>Cores</h2><p class="muted">Uma cor pode ser reutilizada por vários produtos.</p></div></div>
-      <form id="color-form" class="compact-form" hidden>
-        <label>Nome<input name="name" maxlength="80" required></label>
-        <label>Hex<input name="hexCode" maxlength="7" placeholder="#000000"></label>
-        <button class="primary-button" type="submit">Adicionar</button>
-      </form>
-      <div class="table-wrap"><table class="compact-table"><thead><tr><th>Cor</th><th>Hex</th><th>Status</th><th></th></tr></thead><tbody id="colors-body"></tbody></table></div>
-    </article>
-
-    <article class="admin-card">
-      <div class="section-heading"><div><h2>Tamanhos</h2><p class="muted">A ordem controla a apresentação da grade.</p></div></div>
-      <form id="size-form" class="compact-form" hidden>
-        <label>Tamanho<input name="label" maxlength="30" required></label>
-        <label>Ordem<input name="sortOrder" type="number" step="1" value="0"></label>
-        <button class="primary-button" type="submit">Adicionar</button>
-      </form>
-      <div class="table-wrap"><table class="compact-table"><thead><tr><th>Tamanho</th><th>Ordem</th><th>Status</th><th></th></tr></thead><tbody id="sizes-body"></tbody></table></div>
-    </article>
-  </section>
-
-  <section id="grade-section" hidden>
+  <section id="grade-section" class="grade-workspace" hidden>
     <article class="admin-card product-grade-heading">
       <div><p class="eyebrow">Produto selecionado</p><h2 id="grade-product-name"></h2><p id="grade-product-meta" class="muted"></p></div>
-      <form id="variant-form" class="compact-form" hidden>
+      <form id="variant-form" class="variant-create-form" hidden>
         <label>Cor<select name="colorId" required></select></label>
-        <label>Nome opcional<input name="variantName" maxlength="150" placeholder="Ex.: Preto verniz"></label>
-        <button class="primary-button" type="submit">Adicionar cor ao produto</button>
+        <label>Nome da variante<input name="variantName" maxlength="150" placeholder="Opcional, ex.: Preto verniz"></label>
+        <button class="primary-button" type="submit">+ Adicionar cor</button>
       </form>
     </article>
 
+    <div class="grade-workspace-heading"><div><h2>Variantes e SKUs</h2><p class="muted">Defina tamanhos, códigos, preços e estoque mínimo para cada combinação.</p></div></div>
     <div id="variants-container" class="variants-container"></div>
 
     <article class="admin-card">
-      <div class="section-heading"><div><h2>Fotos por cor</h2><p class="muted">Associe imagens já enviadas ao produto à variante de cor correspondente.</p></div></div>
+      <div class="section-heading"><div><h2>Fotos por cor</h2><p class="muted">Associe imagens já enviadas ao produto à variante correspondente.</p></div><a class="text-button" href="/pages/products.html">Gerenciar imagens</a></div>
       <div id="image-assignment" class="image-assignment-grid"></div>
     </article>
   </section>
+
+  <details class="admin-card grade-master-details">
+    <summary><span><strong>Cadastros auxiliares da grade</strong><small>Cores e tamanhos reutilizados pelos produtos</small></span><span aria-hidden="true">⌄</span></summary>
+    <div class="grade-master-grid">
+      <article class="grade-master-card">
+        <div class="section-heading"><div><h2>Cores</h2><p class="muted">Uma cor pode ser reutilizada por vários produtos.</p></div></div>
+        <form id="color-form" class="compact-form" hidden>
+          <label>Nome<input name="name" maxlength="80" required></label>
+          <label>Hex<input name="hexCode" maxlength="7" placeholder="#000000"></label>
+          <button class="primary-button" type="submit">Adicionar</button>
+        </form>
+        <div class="table-wrap"><table class="compact-table"><thead><tr><th>Cor</th><th>Hex</th><th>Status</th><th></th></tr></thead><tbody id="colors-body"></tbody></table></div>
+      </article>
+      <article class="grade-master-card">
+        <div class="section-heading"><div><h2>Tamanhos</h2><p class="muted">A ordem controla a apresentação da grade.</p></div></div>
+        <form id="size-form" class="compact-form" hidden>
+          <label>Tamanho<input name="label" maxlength="30" required></label>
+          <label>Ordem<input name="sortOrder" type="number" step="1" value="0"></label>
+          <button class="primary-button" type="submit">Adicionar</button>
+        </form>
+        <div class="table-wrap"><table class="compact-table"><thead><tr><th>Tamanho</th><th>Ordem</th><th>Status</th><th></th></tr></thead><tbody id="sizes-body"></tbody></table></div>
+      </article>
+    </div>
+  </details>
 </main>
 <script src="/js/grade.js" defer></script>
 </body>
