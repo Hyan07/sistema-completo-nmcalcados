@@ -5,6 +5,7 @@ const express = require('express');
 const { env } = require('./config/env');
 const { createSessionMiddleware } = require('./config/session');
 const { apiRateLimit } = require('./middlewares/apiRateLimit');
+const { createAdminPageShellMiddleware } = require('./middlewares/adminPageShell');
 const { apiContentTypeGuard } = require('./middlewares/contentTypeGuard');
 const { requestContext } = require('./middlewares/requestContext');
 const { requireTrustedOrigin } = require('./middlewares/requestOriginGuard');
@@ -30,6 +31,7 @@ function createApp() {
   app.use('/api', requireTrustedOrigin, apiContentTypeGuard);
 
   app.use('/media/products', express.static(productMediaDir, { dotfiles: 'deny', index: false, maxAge: env.isProduction ? '7d' : 0 }));
+  app.use('/pages', createAdminPageShellMiddleware(publicDir));
   app.use(express.static(publicDir, { dotfiles: 'deny', index: 'index.html' }));
 
   app.use('/api', routes);
