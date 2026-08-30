@@ -21,8 +21,8 @@ function normalizeOrigin(value) {
   }
 }
 
-function requestOrigin(req) {
-  if (env.appOrigin) return env.appOrigin;
+function requestOrigin(req, configuredOrigin = env.appOrigin) {
+  if (configuredOrigin) return normalizeOrigin(configuredOrigin);
   const protocol = req.protocol || 'http';
   const host = header(req, 'host');
   return host ? normalizeOrigin(`${protocol}://${host}`) : null;
@@ -35,7 +35,7 @@ function sourceOrigin(req) {
   return normalizeOrigin(referer);
 }
 
-function requireTrustedOrigin(req, res, next) {
+function requireTrustedOrigin(req, res, next, configuredOrigin = env.appOrigin) {
   if (SAFE_METHODS.has(String(req.method || '').toUpperCase())) return next();
 
   const fetchSite = String(header(req, 'sec-fetch-site') || '').toLowerCase();
@@ -43,7 +43,7 @@ function requireTrustedOrigin(req, res, next) {
     return next(new HttpError(403, 'UNTRUSTED_REQUEST_ORIGIN', 'Origem da requisição não autorizada.'));
   }
 
-  const expected = requestOrigin(req);
+  const expected = requestOrigin(req, configuredOrigin);
   const source = sourceOrigin(req);
   const authenticated = Boolean(req.session?.auth?.userId);
 
@@ -51,8 +51,6 @@ function requireTrustedOrigin(req, res, next) {
     return next(new HttpError(403, 'UNTRUSTED_REQUEST_ORIGIN', 'Origem da requisição não autorizada.'));
   }
 
-  // Para sessão autenticada, uma mutação sem Origin/Referer não é aceita.
-  // Requisições públicas sem cookie (ex.: catálogo/API CLI) continuam possíveis.
   if (authenticated && (!source || !expected)) {
     return next(new HttpError(403, 'REQUEST_ORIGIN_REQUIRED', 'Não foi possível validar a origem da requisição autenticada.'));
   }
