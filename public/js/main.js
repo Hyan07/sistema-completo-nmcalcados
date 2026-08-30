@@ -17,6 +17,7 @@ function showSession(user, permissions = []) {
   document.getElementById('products-link').hidden = !permissions.includes('products.read');
   document.getElementById('grade-link').hidden = !permissions.includes('products.read');
   document.getElementById('stock-link').hidden = !permissions.includes('stock.read');
+  document.getElementById('customers-link').hidden = !permissions.includes('customers.read');
   document.getElementById('users-link').hidden = !permissions.includes('users.read');
 }
 function showLogin() { panel.hidden = true; form.hidden = false; }

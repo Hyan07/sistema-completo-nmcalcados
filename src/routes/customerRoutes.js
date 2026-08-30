@@ -1,0 +1,13 @@
+'use strict';
+const express = require('express');
+const controller = require('../controllers/customerController');
+const { authenticate } = require('../middlewares/authenticate');
+const { authorize } = require('../middlewares/authorize');
+const router = express.Router();
+router.use(authenticate);
+router.get('/lookup', authorize('customers.read'), controller.lookup);
+router.get('/', authorize('customers.read'), controller.list);
+router.get('/:id', authorize('customers.read'), controller.getById);
+router.post('/', authorize('customers.manage'), controller.create);
+router.patch('/:id', authorize('customers.manage'), controller.update);
+module.exports = router;

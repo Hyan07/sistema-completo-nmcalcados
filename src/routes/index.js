@@ -9,6 +9,7 @@ const colorRoutes = require('./colorRoutes');
 const sizeRoutes = require('./sizeRoutes');
 const productRoutes = require('./productRoutes');
 const stockRoutes = require('./stockRoutes');
+const customerRoutes = require('./customerRoutes');
 
 const router = express.Router();
 router.get('/health', (req, res) => { res.status(200).json({ status: 'ok', application: 'nm-calcados' }); });
@@ -20,4 +21,5 @@ router.use('/colors', colorRoutes);
 router.use('/sizes', sizeRoutes);
 router.use('/products', productRoutes);
 router.use('/stock', stockRoutes);
+router.use('/customers', customerRoutes);
 module.exports = router;
