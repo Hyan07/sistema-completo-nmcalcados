@@ -12,20 +12,30 @@ const parsedDbConnectionLimit = Number.parseInt(process.env.DB_CONNECTION_LIMIT 
 const parsedSessionMaxAgeMinutes = Number.parseInt(process.env.SESSION_MAX_AGE_MINUTES || '480', 10);
 const parsedBcryptRounds = Number.parseInt(process.env.BCRYPT_ROUNDS || '12', 10);
 
-if (!Number.isInteger(parsedPort) || parsedPort < 1 || parsedPort > 65535) {
-  throw new Error('PORT deve ser um número inteiro entre 1 e 65535.');
+function parseAppOrigin(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  let url;
+  try { url = new URL(raw); }
+  catch (_) { throw new Error('APP_ORIGIN deve ser uma URL absoluta HTTP/HTTPS.'); }
+  if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password || url.pathname !== '/' || url.search || url.hash) {
+    throw new Error('APP_ORIGIN deve conter apenas a origem HTTP/HTTPS da aplicação.');
+  }
+  return url.origin;
 }
-if (!Number.isInteger(parsedSessionMaxAgeMinutes) || parsedSessionMaxAgeMinutes < 5 || parsedSessionMaxAgeMinutes > 10080) {
-  throw new Error('SESSION_MAX_AGE_MINUTES deve ser um inteiro entre 5 e 10080.');
-}
-if (!Number.isInteger(parsedBcryptRounds) || parsedBcryptRounds < 10 || parsedBcryptRounds > 15) {
-  throw new Error('BCRYPT_ROUNDS deve ser um inteiro entre 10 e 15.');
-}
+
+if (!Number.isInteger(parsedPort) || parsedPort < 1 || parsedPort > 65535) throw new Error('PORT deve ser um número inteiro entre 1 e 65535.');
+if (!Number.isInteger(parsedSessionMaxAgeMinutes) || parsedSessionMaxAgeMinutes < 5 || parsedSessionMaxAgeMinutes > 10080) throw new Error('SESSION_MAX_AGE_MINUTES deve ser um inteiro entre 5 e 10080.');
+if (!Number.isInteger(parsedBcryptRounds) || parsedBcryptRounds < 10 || parsedBcryptRounds > 15) throw new Error('BCRYPT_ROUNDS deve ser um inteiro entre 10 e 15.');
+
+const appOrigin = parseAppOrigin(process.env.APP_ORIGIN);
+if (nodeEnv === 'production' && !appOrigin) throw new Error('APP_ORIGIN é obrigatório em produção para validar a origem das requisições.');
 
 const env = Object.freeze({
   nodeEnv,
   isProduction: nodeEnv === 'production',
   port: parsedPort,
+  appOrigin,
   db: Object.freeze({
     host: process.env.DB_HOST || '',
     port: parsedDbPort,
@@ -39,4 +49,4 @@ const env = Object.freeze({
   bcryptRounds: parsedBcryptRounds
 });
 
-module.exports = { env };
+module.exports = { env, parseAppOrigin };

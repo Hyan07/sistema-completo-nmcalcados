@@ -21,10 +21,13 @@ function createSessionMiddleware() {
     resave: false,
     saveUninitialized: false,
     rolling: true,
+    unset: 'destroy',
     cookie: {
       httpOnly: true,
       secure: env.isProduction,
       sameSite: 'lax',
+      priority: 'high',
+      path: '/',
       maxAge: env.sessionMaxAgeMinutes * 60 * 1000
     }
   });
