@@ -4,11 +4,11 @@ ERP/POS monolítico e integrado para a NM Calçados, com backend Node.js/Express
 
 ## Estado atual
 
-**FASE 16 — Importação dos dados reais concluída no código.**
+**FASE 17 — Auditoria Completa do Sistema concluída.**
 
-O sistema possui autenticação/RBAC, produtos e grade, estoque transacional, clientes, fornecedores/compras, PDV/vendas, caixa, financeiro, dashboard, relatórios, catálogo público, pedidos/reservas e agora uma esteira segura de importação CSV com dry-run, idempotência e aplicação transacional.
+O sistema possui autenticação/RBAC, produtos e grade, estoque transacional, clientes, fornecedores/compras, PDV/vendas, caixa, financeiro, dashboard, relatórios, catálogo público, pedidos/reservas e importação controlada de dados reais.
 
-A carga real não inventa dados: os arquivos efetivos da loja ainda precisam ser fornecidos e validados no ambiente de implantação.
+A FASE 17 endurece invariantes entre módulos, corrige o consumo de reservas por movimento exato, reforça idempotência financeira e adiciona auditoria read-only de integridade.
 
 ## Execução local
 
@@ -16,13 +16,22 @@ A carga real não inventa dados: os arquivos efetivos da loja ainda precisam ser
 npm install
 cp .env.example .env
 npm run db:check
+npm run audit:integrity
 npm run db:migrate
-npm run auth:bootstrap-admin
 npm test
+npm run audit:integrity
 npm run dev
 ```
 
 No Windows: `Copy-Item .env.example .env`.
+
+## Auditoria de integridade
+
+```bash
+npm run audit:integrity
+```
+
+O comando não altera dados. Ele falha quando encontra inconsistências críticas entre saldo/ledger, reservas, compras, vendas, caixa, financeiro ou importações. Consulte `docs/AUDITORIA_SISTEMA.md`.
 
 ## Módulos disponíveis
 
@@ -42,14 +51,12 @@ No Windows: `Copy-Item .env.example .env`.
 - Compras: `/pages/purchases.html`
 - Usuários: `/pages/users.html`
 
-Documentação da fase: `docs/IMPORTACAO_DADOS.md`.
-
 ## Banco
 
 Migrations ficam em `src/database/migrations/` e são controladas por `schema_migrations` com checksum. Não altere migrations já aplicadas.
 
-A FASE 16 adiciona `019_data_import_phase16.sql`, criando somente metadados de lotes/idempotência e permissões. O conteúdo bruto dos CSVs não é persistido em staging.
+A FASE 17 adiciona `020_integrity_audit_phase17.sql`, reforçando unicidade de caixa aberto, vínculo único de venda convertida e reserva ativa única por item.
 
 ## Próxima fase
 
-**FASE 17 — Auditoria completa do sistema.**
+**FASE 18 — Testes, segurança e revisão de fluxos.**
