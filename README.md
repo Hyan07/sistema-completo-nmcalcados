@@ -4,11 +4,11 @@ ERP/POS monolítico e integrado para a NM Calçados, com backend Node.js/Express
 
 ## Estado atual
 
-**FASE 12 — Dashboard concluída.**
+**FASE 13 - Relatórios concluída.**
 
-O sistema possui autenticação/RBAC, produtos e grade, estoque transacional, clientes, fornecedores/compras, PDV/vendas, caixa, financeiro completo e agora um dashboard executivo derivado das fontes transacionais.
+O sistema possui autenticação/RBAC, produtos e grade, estoque transacional, clientes, fornecedores/compras, PDV/vendas, caixa, financeiro, dashboard executivo e agora relatórios detalhados com exportação CSV/PDF.
 
-O painel consolida faturamento, vendas, ticket médio, unidades, evolução diária, top produtos, mix de pagamento, estoque/ruptura, compras pendentes, posição financeira, fluxo líquido, caixas abertos e alertas operacionais sem duplicar saldos em tabelas auxiliares.
+Os relatórios consultam as mesmas fontes transacionais dos módulos e aplicam permissões de domínio. Não existem tabelas paralelas de faturamento, saldo ou estoque para exportação.
 
 ## Execução local
 
@@ -27,6 +27,7 @@ No Windows: `Copy-Item .env.example .env`.
 ## Módulos disponíveis
 
 - Dashboard: `/pages/dashboard.html`
+- Relatórios: `/pages/reports.html`
 - PDV: `/pages/pos.html`
 - Caixa: `/pages/cash.html`
 - Financeiro: `/pages/finance.html`
@@ -38,14 +39,14 @@ No Windows: `Copy-Item .env.example .env`.
 - Compras: `/pages/purchases.html`
 - Usuários: `/pages/users.html`
 
-Documentação da fase: `docs/DASHBOARD.md`.
+Documentação da fase: `docs/RELATORIOS.md`.
 
 ## Banco
 
 Migrations ficam em `src/database/migrations/` e são controladas por `schema_migrations` com checksum. Não altere migrations já aplicadas.
 
-A FASE 12 adiciona `015_dashboard_phase12.sql`, criando apenas a permissão executiva `dashboard.read`. Os indicadores são calculados das tabelas existentes e não exigem tabelas de agregação duplicadas.
+A FASE 13 adiciona `016_reports_phase13.sql`, concedendo `reports.read` aos perfis Caixa e Estoque. O acesso aos dados continua exigindo também a permissão específica de cada domínio.
 
 ## Próxima fase
 
-**FASE 13 — Relatórios.**
+**FASE 14 - Catálogo público.**
