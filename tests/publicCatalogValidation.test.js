@@ -1,0 +1,10 @@
+'use strict';
+const test=require('node:test');const assert=require('node:assert/strict');
+const{normalizeCatalogQuery,parseCatalogProductId}=require('../src/utils/publicCatalogValidation');
+test('catálogo usa paginação e ordenação padrão',()=>{const q=normalizeCatalogQuery({});assert.equal(q.page,1);assert.equal(q.pageSize,12);assert.equal(q.sort,'featured');assert.equal(q.availability,'all');});
+test('catálogo aceita filtros públicos válidos',()=>{const q=normalizeCatalogQuery({q:'Tênis',category:'masculino',brand:'marca-x',audience:'Masculino',featured:'true',availability:'available',sort:'price_asc',page:'2',pageSize:'24'});assert.equal(q.offset,24);assert.equal(q.featured,true);assert.equal(q.brandSlug,'marca-x');});
+test('catálogo rejeita slug inválido',()=>assert.throws(()=>normalizeCatalogQuery({category:'../../admin'}),/Categoria inválido/));
+test('catálogo limita pageSize a 24',()=>assert.throws(()=>normalizeCatalogQuery({pageSize:'25'}),/Tamanho da página inválido/));
+test('catálogo rejeita ordenação arbitrária',()=>assert.throws(()=>normalizeCatalogQuery({sort:'id desc'}),/Ordenação do catálogo inválida/));
+test('catálogo rejeita pesquisa excessiva',()=>assert.throws(()=>normalizeCatalogQuery({q:'x'.repeat(101)}),/Pesquisa excede/));
+test('produto público exige id positivo',()=>{assert.equal(parseCatalogProductId('9'),9);assert.throws(()=>parseCatalogProductId('0'),/Produto inválido/);});

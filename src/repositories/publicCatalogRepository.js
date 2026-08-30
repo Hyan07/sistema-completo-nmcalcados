@@ -1,0 +1,125 @@
+'use strict';
+
+const { getPool } = require('../config/database');
+
+const PUBLIC_PRODUCT_SCOPE = "p.is_active = 1 AND p.is_catalog_visible = 1";
+const AVAILABLE_SKU_EXISTS = `EXISTS (
+  SELECT 1
+    FROM product_variants av
+    JOIN colors ac ON ac.id = av.color_id AND ac.is_active = 1
+    JOIN product_skus aps ON aps.product_variant_id = av.id AND aps.is_active = 1
+    JOIN sizes asz ON asz.id = aps.size_id AND asz.is_active = 1
+    JOIN stock_balances asb ON asb.product_sku_id = aps.id AND asb.quantity > 0
+   WHERE av.product_id = p.id AND av.is_active = 1
+)`;
+const CURRENT_PRICE_SQL = `CASE
+  WHEN ps.promotional_price IS NOT NULL THEN ps.promotional_price
+  WHEN ps.sale_price IS NOT NULL THEN ps.sale_price
+  WHEN p.promotional_price IS NOT NULL THEN p.promotional_price
+  ELSE p.base_sale_price
+END`;
+
+function filtersSql(filters) {
+  const where = [PUBLIC_PRODUCT_SCOPE, '(p.category_id IS NULL OR c.is_active = 1)', '(p.brand_id IS NULL OR b.is_active = 1)'];
+  const params = [];
+  if (filters.q) {
+    const like = `%${filters.q}%`;
+    where.push('(p.name LIKE ? OR p.model LIKE ? OR p.description LIKE ? OR b.name LIKE ? OR c.name LIKE ?)');
+    params.push(like, like, like, like, like);
+  }
+  if (filters.categorySlug) { where.push('c.slug = ?'); params.push(filters.categorySlug); }
+  if (filters.brandSlug) { where.push('b.slug = ?'); params.push(filters.brandSlug); }
+  if (filters.audience) { where.push('p.audience = ?'); params.push(filters.audience); }
+  if (filters.featured !== null) { where.push('p.is_featured = ?'); params.push(filters.featured ? 1 : 0); }
+  if (filters.availability === 'available') where.push(AVAILABLE_SKU_EXISTS);
+  if (filters.availability === 'unavailable') where.push(`NOT ${AVAILABLE_SKU_EXISTS}`);
+  return { sql: `WHERE ${where.join(' AND ')}`, params };
+}
+
+const SORT_SQL = {
+  featured: 'p.is_featured DESC, has_stock DESC, p.updated_at DESC, p.name, p.id',
+  newest: 'p.created_at DESC, p.id DESC',
+  price_asc: 'price_from ASC, p.name, p.id',
+  price_desc: 'price_from DESC, p.name, p.id',
+  name: 'p.name, p.id'
+};
+
+async function listMetadata() {
+  const pool = getPool();
+  const [categories, brands, audiences] = await Promise.all([
+    pool.query(`SELECT c.id,c.name,c.slug,COUNT(p.id) product_count FROM categories c JOIN products p ON p.category_id=c.id AND ${PUBLIC_PRODUCT_SCOPE} WHERE c.is_active=1 GROUP BY c.id,c.name,c.slug HAVING COUNT(p.id)>0 ORDER BY c.name,c.id`).then(([rows]) => rows),
+    pool.query(`SELECT b.id,b.name,b.slug,COUNT(p.id) product_count FROM brands b JOIN products p ON p.brand_id=b.id AND ${PUBLIC_PRODUCT_SCOPE} WHERE b.is_active=1 GROUP BY b.id,b.name,b.slug HAVING COUNT(p.id)>0 ORDER BY b.name,b.id`).then(([rows]) => rows),
+    pool.query(`SELECT DISTINCT p.audience FROM products p WHERE ${PUBLIC_PRODUCT_SCOPE} AND p.audience IS NOT NULL AND TRIM(p.audience)<>'' ORDER BY p.audience`).then(([rows]) => rows.map((row) => row.audience))
+  ]);
+  return { categories, brands, audiences };
+}
+
+async function listProducts(filters) {
+  const built = filtersSql(filters);
+  const sortSql = SORT_SQL[filters.sort];
+  const [rows] = await getPool().execute(`
+    SELECT p.id,p.name,p.model,p.audience,p.collection_name,p.material,p.is_featured,p.created_at,p.updated_at,
+           c.name category_name,c.slug category_slug,b.name brand_name,b.slug brand_slug,
+           (SELECT pi.file_path FROM product_images pi WHERE pi.product_id=p.id ORDER BY pi.is_primary DESC,pi.sort_order,pi.id LIMIT 1) primary_image,
+           COALESCE((SELECT MIN(${CURRENT_PRICE_SQL}) FROM product_variants pv JOIN colors pc ON pc.id=pv.color_id AND pc.is_active=1 JOIN product_skus ps ON ps.product_variant_id=pv.id AND ps.is_active=1 JOIN sizes sz ON sz.id=ps.size_id AND sz.is_active=1 WHERE pv.product_id=p.id AND pv.is_active=1),COALESCE(p.promotional_price,p.base_sale_price)) price_from,
+           COALESCE((SELECT MAX(${CURRENT_PRICE_SQL}) FROM product_variants pv JOIN colors pc ON pc.id=pv.color_id AND pc.is_active=1 JOIN product_skus ps ON ps.product_variant_id=pv.id AND ps.is_active=1 JOIN sizes sz ON sz.id=ps.size_id AND sz.is_active=1 WHERE pv.product_id=p.id AND pv.is_active=1),COALESCE(p.promotional_price,p.base_sale_price)) price_to,
+           ${AVAILABLE_SKU_EXISTS} has_stock
+      FROM products p
+      LEFT JOIN categories c ON c.id=p.category_id
+      LEFT JOIN brands b ON b.id=p.brand_id
+      ${built.sql}
+     ORDER BY ${sortSql}
+     LIMIT ? OFFSET ?
+  `, [...built.params, filters.pageSize, filters.offset]);
+  const [countRows] = await getPool().execute(`SELECT COUNT(*) total FROM products p LEFT JOIN categories c ON c.id=p.category_id LEFT JOIN brands b ON b.id=p.brand_id ${built.sql}`, built.params);
+  return { rows, total: Number(countRows[0].total) };
+}
+
+async function findPublicProduct(productId) {
+  const [rows] = await getPool().execute(`
+    SELECT p.id,p.name,p.description,p.model,p.audience,p.collection_name,p.material,p.is_featured,
+           p.base_sale_price,p.promotional_price,
+           c.name category_name,c.slug category_slug,b.name brand_name,b.slug brand_slug
+      FROM products p
+      LEFT JOIN categories c ON c.id=p.category_id
+      LEFT JOIN brands b ON b.id=p.brand_id
+     WHERE p.id=? AND ${PUBLIC_PRODUCT_SCOPE}
+       AND (p.category_id IS NULL OR c.is_active=1)
+       AND (p.brand_id IS NULL OR b.is_active=1)
+     LIMIT 1
+  `, [productId]);
+  return rows[0] || null;
+}
+
+async function listPublicImages(productId) {
+  const [rows] = await getPool().execute(`
+    SELECT pi.id,pi.product_variant_id,pi.file_path,pi.alt_text,pi.sort_order,pi.is_primary
+      FROM product_images pi
+      LEFT JOIN product_variants pv ON pv.id=pi.product_variant_id
+      LEFT JOIN colors c ON c.id=pv.color_id
+     WHERE pi.product_id=? AND (pi.product_variant_id IS NULL OR (pv.is_active=1 AND c.is_active=1))
+     ORDER BY pi.is_primary DESC,pi.sort_order,pi.id
+  `, [productId]);
+  return rows;
+}
+
+async function listPublicSkus(productId) {
+  const [rows] = await getPool().execute(`
+    SELECT pv.id variant_id,pv.variant_name,c.id color_id,c.name color_name,c.hex_code,
+           ps.id sku_id,sz.id size_id,sz.label size_label,sz.sort_order,
+           COALESCE(ps.sale_price,p.base_sale_price) regular_price,
+           ${CURRENT_PRICE_SQL} current_price,
+           CASE WHEN COALESCE(sb.quantity,0)>0 THEN 1 ELSE 0 END is_available
+      FROM products p
+      JOIN product_variants pv ON pv.product_id=p.id AND pv.is_active=1
+      JOIN colors c ON c.id=pv.color_id AND c.is_active=1
+      JOIN product_skus ps ON ps.product_variant_id=pv.id AND ps.is_active=1
+      JOIN sizes sz ON sz.id=ps.size_id AND sz.is_active=1
+      LEFT JOIN stock_balances sb ON sb.product_sku_id=ps.id
+     WHERE p.id=? AND ${PUBLIC_PRODUCT_SCOPE}
+     ORDER BY c.name,pv.id,sz.sort_order,sz.label,ps.id
+  `, [productId]);
+  return rows;
+}
+
+module.exports = { findPublicProduct, listMetadata, listProducts, listPublicImages, listPublicSkus };

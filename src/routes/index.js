@@ -18,9 +18,11 @@ const paymentRoutes = require('./paymentRoutes');
 const financeRoutes = require('./financeRoutes');
 const dashboardRoutes = require('./dashboardRoutes');
 const reportRoutes = require('./reportRoutes');
+const publicCatalogRoutes = require('./publicCatalogRoutes');
 
 const router = express.Router();
 router.get('/health', (req, res) => { res.status(200).json({ status: 'ok', application: 'nm-calcados' }); });
+router.use('/catalog', publicCatalogRoutes);
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/categories', categoryRoutes);

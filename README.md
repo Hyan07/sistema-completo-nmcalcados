@@ -4,11 +4,11 @@ ERP/POS monolítico e integrado para a NM Calçados, com backend Node.js/Express
 
 ## Estado atual
 
-**FASE 13 - Relatórios concluída.**
+**FASE 14 — Catálogo Público concluída.**
 
-O sistema possui autenticação/RBAC, produtos e grade, estoque transacional, clientes, fornecedores/compras, PDV/vendas, caixa, financeiro, dashboard executivo e agora relatórios detalhados com exportação CSV/PDF.
+O sistema possui autenticação/RBAC, produtos e grade, estoque transacional, clientes, fornecedores/compras, PDV/vendas, caixa, financeiro, dashboard, relatórios e agora catálogo público derivado do mesmo cadastro comercial.
 
-Os relatórios consultam as mesmas fontes transacionais dos módulos e aplicam permissões de domínio. Não existem tabelas paralelas de faturamento, saldo ou estoque para exportação.
+A vitrine publica somente produtos ativos marcados para catálogo, resolve preços com a mesma regra do PDV e expõe disponibilidade por tamanho sem revelar saldo exato, custos, códigos internos ou dados administrativos.
 
 ## Execução local
 
@@ -26,6 +26,7 @@ No Windows: `Copy-Item .env.example .env`.
 
 ## Módulos disponíveis
 
+- Catálogo público: `/catalog/`
 - Dashboard: `/pages/dashboard.html`
 - Relatórios: `/pages/reports.html`
 - PDV: `/pages/pos.html`
@@ -39,14 +40,14 @@ No Windows: `Copy-Item .env.example .env`.
 - Compras: `/pages/purchases.html`
 - Usuários: `/pages/users.html`
 
-Documentação da fase: `docs/RELATORIOS.md`.
+Documentação da fase: `docs/CATALOGO_PUBLICO.md`.
 
 ## Banco
 
 Migrations ficam em `src/database/migrations/` e são controladas por `schema_migrations` com checksum. Não altere migrations já aplicadas.
 
-A FASE 13 adiciona `016_reports_phase13.sql`, concedendo `reports.read` aos perfis Caixa e Estoque. O acesso aos dados continua exigindo também a permissão específica de cada domínio.
+A FASE 14 adiciona `017_public_catalog_phase14.sql`, apenas com índices para consultas públicas de variantes, SKUs e imagens. Produtos/preços/estoque continuam usando as tabelas transacionais existentes.
 
 ## Próxima fase
 
-**FASE 14 - Catálogo público.**
+**FASE 15 — Pedidos e reservas pelo catálogo.**
