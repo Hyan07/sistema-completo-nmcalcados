@@ -1,43 +1,6 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>NM Calçados | Relatórios</title>
-  <link rel="stylesheet" href="/css/main.css">
-  <link rel="stylesheet" href="/css/reports.css">
-</head>
-<body>
-<main class="admin-shell reports-shell">
-  <header class="admin-header">
-    <div><p class="eyebrow">NM Calçados</p><h1>Relatórios</h1><p class="muted">Consultas detalhadas e exportações geradas a partir dos dados transacionais.</p></div>
-    <a class="secondary-link" href="/">Voltar</a>
-  </header>
-
-  <section class="admin-card">
-    <form id="report-filters" class="report-filters">
-      <label>Relatório<select id="report-key" name="reportKey"></select></label>
-      <label data-filter="q">Pesquisar<input id="q" name="q" placeholder="Nome, código, contato ou referência"></label>
-      <label data-filter="dateFrom">De<input id="date-from" name="dateFrom" type="date"></label>
-      <label data-filter="dateTo">Até<input id="date-to" name="dateTo" type="date"></label>
-      <label data-filter="status">Status<select id="status" name="status"></select></label>
-      <label data-filter="isActive">Ativo<select id="is-active" name="isActive"><option value="">Todos</option><option value="1">Ativos</option><option value="0">Inativos</option></select></label>
-      <label data-filter="stockStatus">Estoque<select id="stock-status" name="stockStatus"><option value="">Todos</option><option value="OUT_OF_STOCK">Sem estoque</option><option value="LOW_STOCK">Estoque baixo</option><option value="OK">Normal</option><option value="INACTIVE_WITH_STOCK">Inativo com saldo</option><option value="INACTIVE">Inativo sem saldo</option></select></label>
-      <label data-filter="movementType">Movimento<select id="movement-type" name="movementType"><option value="">Todos</option><option>INITIAL_BALANCE</option><option>MANUAL_ENTRY</option><option>MANUAL_EXIT</option><option>INVENTORY_GAIN</option><option>INVENTORY_LOSS</option><option>LOSS</option><option>PURCHASE_RECEIPT</option><option>SUPPLIER_RETURN</option><option>SALE</option><option>SALE_CANCEL</option><option>CUSTOMER_RETURN</option></select></label>
-      <label data-filter="financeType">Tipo financeiro<select id="finance-type" name="financeType"><option value="">Receber e pagar</option><option value="RECEIVABLE">Contas a receber</option><option value="PAYABLE">Contas a pagar</option></select></label>
-      <div class="report-actions"><button class="primary-button" type="submit">Gerar</button><button id="export-csv" class="secondary-button" type="button">Exportar CSV</button><button id="export-pdf" class="secondary-button" type="button">Exportar PDF</button></div>
-    </form>
-    <p id="period-label" class="muted"></p><p id="feedback" class="feedback" role="status" aria-live="polite"></p>
-  </section>
-
-  <section id="summary" class="report-summary"></section>
-
-  <section class="admin-card">
-    <div class="section-heading"><div><h2 id="report-title">Relatório</h2><p id="row-count" class="muted"></p></div></div>
-    <div class="table-wrap"><table><thead><tr id="report-head"></tr></thead><tbody id="report-body"></tbody></table></div>
-    <div class="pagination"><button id="prev-page" class="secondary-button" type="button">Anterior</button><span id="page-info" class="muted"></span><button id="next-page" class="secondary-button" type="button">Próxima</button></div>
-  </section>
-</main>
-<script src="/js/reports.js" defer></script>
-</body>
-</html>
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>NM Calçados | Relatórios</title><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/css/reports.css"></head><body>
+<main class="admin-shell reports-shell"><header class="admin-header"><div><p class="eyebrow">Gestão</p><h1>Relatórios</h1><p class="muted">Escolha a área, refine os filtros e só então exporte o recorte validado.</p></div><div class="page-actions"><a class="secondary-link" href="/pages/dashboard.html">Dashboard</a></div></header>
+<section class="reports-workspace"><aside class="admin-card report-catalog-card"><div class="section-heading"><div><h2>Biblioteca</h2><p class="muted">Relatórios disponíveis para suas permissões.</p></div></div><nav id="report-catalog-menu" class="report-catalog-menu" aria-label="Categorias de relatórios"></nav></aside><article class="admin-card report-filter-card"><div class="section-heading"><div><h2>Filtros do relatório</h2><p class="muted">Os filtros exibidos mudam conforme o relatório selecionado.</p></div></div><form id="report-filters" class="report-filters"><label class="report-select-field">Relatório<select id="report-key" name="reportKey"></select></label><label data-filter="q">Pesquisar<input id="q" name="q" placeholder="Nome, código, contato ou referência"></label><label data-filter="dateFrom">De<input id="date-from" name="dateFrom" type="date"></label><label data-filter="dateTo">Até<input id="date-to" name="dateTo" type="date"></label><label data-filter="status">Status<select id="status" name="status"></select></label><label data-filter="isActive">Ativo<select id="is-active" name="isActive"><option value="">Todos</option><option value="1">Ativos</option><option value="0">Inativos</option></select></label><label data-filter="stockStatus">Estoque<select id="stock-status" name="stockStatus"><option value="">Todos</option><option value="OUT_OF_STOCK">Sem estoque</option><option value="LOW_STOCK">Estoque baixo</option><option value="OK">Normal</option><option value="INACTIVE_WITH_STOCK">Inativo com saldo</option><option value="INACTIVE">Inativo sem saldo</option></select></label><label data-filter="movementType">Movimento<select id="movement-type" name="movementType"><option value="">Todos</option><option>INITIAL_BALANCE</option><option>MANUAL_ENTRY</option><option>MANUAL_EXIT</option><option>INVENTORY_GAIN</option><option>INVENTORY_LOSS</option><option>LOSS</option><option>PURCHASE_RECEIPT</option><option>SUPPLIER_RETURN</option><option>SALE</option><option>SALE_CANCEL</option><option>CUSTOMER_RETURN</option></select></label><label data-filter="financeType">Tipo financeiro<select id="finance-type" name="financeType"><option value="">Receber e pagar</option><option value="RECEIVABLE">Contas a receber</option><option value="PAYABLE">Contas a pagar</option></select></label><div class="report-actions"><button class="primary-button" type="submit">Gerar relatório</button><button id="export-csv" class="secondary-button" type="button">Exportar CSV</button><button id="export-pdf" class="secondary-button" type="button">Exportar PDF</button></div></form><div class="report-period-row"><p id="period-label" class="muted"></p><p id="feedback" class="feedback" role="status" aria-live="polite"></p></div></article></section>
+<section id="summary" class="report-summary"></section>
+<section class="admin-card nm-table-card report-result-card"><div class="section-heading"><div><p class="eyebrow">Resultado</p><h2 id="report-title">Relatório</h2><p id="row-count" class="muted"></p></div></div><div class="table-wrap"><table><thead><tr id="report-head"></tr></thead><tbody id="report-body"></tbody></table></div><div class="pagination"><button id="prev-page" class="secondary-button" type="button">Anterior</button><span id="page-info" class="muted"></span><button id="next-page" class="secondary-button" type="button">Próxima</button></div></section>
+</main><script src="/js/reports.js" defer></script></body></html>
