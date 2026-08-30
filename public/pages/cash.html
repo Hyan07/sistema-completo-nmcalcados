@@ -1,42 +1,9 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>NM Calçados | Caixa</title>
-  <link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/css/cash.css">
-</head>
-<body>
-<main class="admin-shell">
-  <header class="admin-header"><div><p class="eyebrow">NM Calçados</p><h1>Caixa</h1><p class="muted">Abertura, sangria, suprimento, conferência e fechamento do numerário.</p></div><a class="secondary-link" href="/">Voltar</a></header>
-  <section class="cash-grid">
-    <article class="admin-card">
-      <div class="section-heading"><div><h2>Caixas cadastrados</h2><p class="muted">Um caixa só pode ter uma sessão aberta por vez.</p></div></div>
-      <form id="register-form" class="filter-bar" hidden><input name="code" placeholder="Código (ex.: PDV-01)" maxlength="50" required><input name="name" placeholder="Nome do caixa" maxlength="120" required><button class="primary-button" type="submit">Cadastrar</button></form>
-      <div class="table-wrap"><table><thead><tr><th>Código</th><th>Nome</th><th>Status</th><th>Sessão</th><th></th></tr></thead><tbody id="registers-body"></tbody></table></div>
-    </article>
-    <article class="admin-card">
-      <h2>Abrir caixa</h2>
-      <form id="open-form" class="cash-actions" hidden><label>Caixa<select name="cashRegisterId" required></select></label><label>Saldo inicial<input name="openingBalance" type="number" min="0" step="0.01" value="0.00" required></label><label>Observações<input name="notes" maxlength="2000"></label><button class="primary-button" type="submit">Abrir sessão</button></form>
-      <p id="open-hint" class="muted"></p>
-    </article>
-  </section>
-
-  <section id="current-session-card" class="admin-card" hidden>
-    <div class="section-heading"><div><h2 id="current-session-title">Sessão atual</h2><p id="current-session-meta" class="muted"></p></div><button id="refresh-current" class="secondary-button" type="button">Atualizar</button></div>
-    <div class="cash-summary"><div>Saldo inicial<strong id="opening-balance">R$ 0,00</strong></div><div>Movimento líquido<strong id="movement-net">R$ 0,00</strong></div><div>Esperado em dinheiro<strong id="expected-balance">R$ 0,00</strong></div></div>
-    <h3>Resumo por forma de pagamento</h3><div id="payment-totals" class="table-wrap"></div>
-    <div id="manage-cash-area" hidden>
-      <h3>Movimentação manual</h3>
-      <form id="movement-form" class="cash-actions"><label>Tipo<select name="typeCode"><option value="CASH_SUPPLY">Suprimento</option><option value="CASH_WITHDRAWAL">Sangria</option></select></label><label>Valor<input name="amount" type="number" min="0.01" step="0.01" required></label><label>Motivo<input name="reason" minlength="5" maxlength="500" required></label><button class="secondary-button" type="submit">Registrar</button></form>
-      <h3>Fechamento</h3>
-      <form id="close-form" class="cash-actions"><label>Valor contado<input name="declaredClosingBalance" type="number" min="0" step="0.01" required></label><label>Observações<input name="notes" maxlength="2000"></label><button class="primary-button" type="submit">Fechar caixa</button></form>
-    </div>
-    <h3>Movimentos de dinheiro</h3><div class="table-wrap"><table><thead><tr><th>Data</th><th>Tipo</th><th>Valor</th><th>Usuário</th><th>Observação</th></tr></thead><tbody id="movements-body"></tbody></table></div>
-  </section>
-
-  <section class="admin-card"><div class="section-heading"><div><h2>Sessões recentes</h2><p class="muted">Histórico de abertura e fechamento.</p></div><button id="refresh-sessions" class="secondary-button" type="button">Atualizar</button></div><div class="table-wrap"><table><thead><tr><th>Caixa</th><th>Operador</th><th>Abertura</th><th>Fechamento</th><th>Esperado</th><th>Declarado</th><th>Diferença</th></tr></thead><tbody id="sessions-body"></tbody></table></div></section>
-  <p id="feedback" class="feedback" role="status"></p>
-</main>
-<script src="/js/cash.js" defer></script>
-</body>
-</html>
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>NM Calçados | Caixa</title><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/css/cash.css"></head><body>
+<main class="admin-shell cash-shell">
+<header class="admin-header"><div><p class="eyebrow">Financeiro</p><h1>Caixa</h1><p class="muted">Controle abertura, entradas, sangrias e fechamento do numerário por sessão.</p></div><div class="page-actions"><a class="secondary-link" href="/pages/pos.html">PDV</a><a class="secondary-link" href="/pages/finance.html">Financeiro</a></div></header>
+<section class="cash-grid cash-setup-grid"><article class="admin-card"><div class="section-heading"><div><h2>Caixas cadastrados</h2><p class="muted">Pontos físicos disponíveis para abertura de sessão.</p></div></div><form id="register-form" class="filter-bar register-form" hidden><input name="code" placeholder="Código (ex.: PDV-01)" maxlength="50" required><input name="name" placeholder="Nome do caixa" maxlength="120" required><button class="primary-button" type="submit">Cadastrar</button></form><div class="table-wrap"><table><thead><tr><th>Código</th><th>Nome</th><th>Status</th><th>Sessão</th><th>Ações</th></tr></thead><tbody id="registers-body"></tbody></table></div></article><article class="admin-card open-cash-card"><div class="cash-operation-heading"><span class="cash-operation-icon" aria-hidden="true">↗</span><div><h2>Abrir caixa</h2><p>Inicie uma sessão antes de registrar recebimentos em dinheiro.</p></div></div><form id="open-form" class="cash-actions open-cash-form" hidden><label>Caixa<select name="cashRegisterId" required></select></label><label>Saldo inicial<input name="openingBalance" type="number" min="0" step="0.01" value="0.00" required></label><label>Observações<input name="notes" maxlength="2000"></label><button class="primary-button" type="submit">Abrir sessão</button></form><p id="open-hint" class="muted"></p></article></section>
+<section id="current-session-card" class="admin-card current-session-card" hidden><div class="section-heading"><div><p class="eyebrow">Sessão ativa</p><h2 id="current-session-title">Sessão atual</h2><p id="current-session-meta" class="muted"></p></div><button id="refresh-current" class="secondary-button" type="button">Atualizar</button></div><div class="cash-summary"><div><span>Saldo inicial</span><strong id="opening-balance">R$ 0,00</strong></div><div><span>Movimento líquido</span><strong id="movement-net">R$ 0,00</strong></div><div class="expected-card"><span>Esperado em dinheiro</span><strong id="expected-balance">R$ 0,00</strong></div></div>
+<div class="cash-session-grid"><section class="cash-panel"><div class="cash-panel-heading"><h3>Formas de pagamento</h3><p>Recebimentos associados à sessão.</p></div><div id="payment-totals" class="table-wrap"></div></section><section id="manage-cash-area" class="cash-panel" hidden><div class="cash-panel-heading"><h3>Movimentação manual</h3><p>Suprimentos e sangrias exigem justificativa.</p></div><form id="movement-form" class="cash-actions"><label>Tipo<select name="typeCode"><option value="CASH_SUPPLY">Suprimento</option><option value="CASH_WITHDRAWAL">Sangria</option></select></label><label>Valor<input name="amount" type="number" min="0.01" step="0.01" required></label><label>Motivo<input name="reason" minlength="5" maxlength="500" required></label><button class="secondary-button" type="submit">Registrar movimento</button></form><div class="close-cash-zone"><div class="cash-panel-heading"><h3>Fechamento</h3><p>Informe o valor contado para apuração da diferença.</p></div><form id="close-form" class="cash-actions"><label>Valor contado<input name="declaredClosingBalance" type="number" min="0" step="0.01" required></label><label>Observações<input name="notes" maxlength="2000"></label><button class="primary-button" type="submit">Fechar caixa</button></form></div></section></div>
+<section class="cash-movements"><div class="cash-panel-heading"><h3>Movimentos de dinheiro</h3><p>Histórico desta sessão.</p></div><div class="table-wrap"><table><thead><tr><th>Data</th><th>Tipo</th><th class="money">Valor</th><th>Usuário</th><th>Observação</th></tr></thead><tbody id="movements-body"></tbody></table></div></section></section>
+<section class="admin-card nm-table-card"><div class="section-heading"><div><h2>Sessões recentes</h2><p class="muted">Histórico de abertura, fechamento e diferenças apuradas.</p></div><button id="refresh-sessions" class="secondary-button" type="button">Atualizar</button></div><div class="table-wrap"><table><thead><tr><th>Caixa</th><th>Operador</th><th>Abertura</th><th>Fechamento</th><th class="money">Esperado</th><th class="money">Declarado</th><th class="money">Diferença</th></tr></thead><tbody id="sessions-body"></tbody></table></div></section><p id="feedback" class="feedback" role="status"></p>
+</main><script src="/js/cash.js" defer></script></body></html>
