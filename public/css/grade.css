@@ -1,6 +1,25 @@
 .header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .grade-product-picker { grid-template-columns: minmax(220px, 1fr) auto minmax(260px, 1fr) auto; }
+.quick-grade-card { border-color: #d9e5dc; }
+.quick-grade-form { display: grid; grid-template-columns: minmax(220px, .7fr) minmax(360px, 1.8fr) auto; gap: 16px; align-items: end; }
+.quick-grade-form > label { display: grid; gap: 6px; font-size: .84rem; font-weight: 700; }
+.quick-grade-form select { width: 100%; border: 1px solid #cfd6dd; border-radius: 10px; padding: 10px; background: #fff; }
+.quick-grade-form fieldset { margin: 0; min-width: 0; border: 0; padding: 0; }
+.quick-grade-form legend { margin-bottom: 7px; font-size: .84rem; font-weight: 700; }
+.quick-size-options { display: flex; gap: 8px; flex-wrap: wrap; }
+.quick-size-chip { position: relative; cursor: pointer; }
+.quick-size-chip input { position: absolute; opacity: 0; pointer-events: none; }
+.quick-size-chip span { display: inline-flex; align-items: center; justify-content: center; min-width: 46px; min-height: 40px; padding: 8px 12px; border: 1px solid #cfd6dd; border-radius: 10px; background: #fff; font-weight: 800; transition: border-color .15s ease, background .15s ease, box-shadow .15s ease; }
+.quick-size-chip input:checked + span { border-color: #20272f; background: #f0f3f5; box-shadow: inset 0 0 0 1px #20272f; }
+.quick-size-chip input:focus-visible + span { outline: 2px solid #20272f; outline-offset: 2px; }
+.grade-advanced-settings { padding: 0; overflow: hidden; }
+.grade-advanced-settings > summary { display: flex; justify-content: space-between; gap: 16px; align-items: center; cursor: pointer; padding: 18px 22px; list-style: none; }
+.grade-advanced-settings > summary::-webkit-details-marker { display: none; }
+.grade-advanced-settings > summary::after { content: '+'; font-size: 1.3rem; font-weight: 800; }
+.grade-advanced-settings[open] > summary::after { content: '−'; }
+.grade-advanced-settings .grade-master-grid { padding: 0 22px 22px; }
 .grade-master-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.grade-master-grid > article { min-width: 0; }
 .product-grade-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
 .product-grade-heading .eyebrow { margin-top: 0; }
 .variants-container { display: grid; gap: 18px; }
@@ -24,9 +43,12 @@
 .variant-image-card select { width: 100%; border: 1px solid #cfd6dd; border-radius: 8px; padding: 8px; }
 .empty-grade { padding: 30px; text-align: center; color: #68727d; border: 1px dashed #cfd6dd; border-radius: 14px; background: #fff; }
 @media (max-width: 1050px) {
-  .grade-product-picker, .variant-toolbar, .sku-batch-form { grid-template-columns: 1fr 1fr; }
+  .grade-product-picker, .variant-toolbar, .sku-batch-form, .quick-grade-form { grid-template-columns: 1fr 1fr; }
+  .quick-grade-form fieldset { grid-column: 1 / -1; }
 }
 @media (max-width: 720px) {
   .grade-master-grid { grid-template-columns: 1fr; }
-  .grade-product-picker, .variant-toolbar, .sku-batch-form { grid-template-columns: 1fr; }
+  .grade-product-picker, .variant-toolbar, .sku-batch-form, .quick-grade-form { grid-template-columns: 1fr; }
+  .quick-grade-form fieldset { grid-column: auto; }
+  .grade-advanced-settings > summary { align-items: flex-start; flex-direction: column; }
 }
