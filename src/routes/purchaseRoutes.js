@@ -14,6 +14,7 @@ router.post('/:id/items',authorize('purchases.manage'),controller.addItem);
 router.patch('/:id/items/:itemId',authorize('purchases.manage'),controller.updateItem);
 router.post('/:id/items/:itemId/cancel',authorize('purchases.manage'),controller.cancelItem);
 router.post('/:id/order',authorize('purchases.manage'),controller.order);
+router.post('/:id/confirm',authorize('purchases.confirm'),controller.confirm);
 router.post('/:id/cancel',authorize('purchases.manage'),controller.cancel);
 router.post('/:id/receipts',authorize('purchases.receive'),controller.receive);
 module.exports=router;
