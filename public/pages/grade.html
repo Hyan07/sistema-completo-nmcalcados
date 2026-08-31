@@ -10,12 +10,12 @@
 <body>
 <main class="admin-shell grade-shell">
   <header class="admin-header">
-    <div><p class="eyebrow">NM Calçados</p><h1>Grade de produtos</h1><p class="muted">Cores, tamanhos, variantes e SKUs.</p></div>
-    <div class="header-actions"><a class="secondary-link" href="/pages/products.html">Produtos</a><a class="secondary-link" href="/">Início</a></div>
+    <div><p class="eyebrow">NM Calçados</p><h1>Grade de produtos</h1><p class="muted">Cadastre cores e tamanhos sem precisar montar SKUs manualmente.</p></div>
+    <div class="header-actions"><a class="secondary-link" href="/pages/products.html">Produtos</a><a class="secondary-link" href="/pages/stock.html">Estoque</a><a class="secondary-link" href="/">Início</a></div>
   </header>
 
   <section class="admin-card">
-    <div class="section-heading"><div><h2>Selecionar produto</h2><p class="muted">Busque pelo nome, código interno ou modelo.</p></div></div>
+    <div class="section-heading"><div><h2>1. Selecione o produto</h2><p class="muted">Busque pelo nome, código interno ou modelo.</p></div></div>
     <form id="product-search-form" class="filter-bar grade-product-picker">
       <input name="q" maxlength="180" placeholder="Buscar produto">
       <button class="secondary-button" type="submit">Buscar</button>
@@ -25,27 +25,45 @@
     <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
   </section>
 
-  <section class="grade-master-grid">
-    <article class="admin-card">
-      <div class="section-heading"><div><h2>Cores</h2><p class="muted">Uma cor pode ser reutilizada por vários produtos.</p></div></div>
-      <form id="color-form" class="compact-form" hidden>
-        <label>Nome<input name="name" maxlength="80" required></label>
-        <label>Hex<input name="hexCode" maxlength="7" placeholder="#000000"></label>
-        <button class="primary-button" type="submit">Adicionar</button>
-      </form>
-      <div class="table-wrap"><table class="compact-table"><thead><tr><th>Cor</th><th>Hex</th><th>Status</th><th></th></tr></thead><tbody id="colors-body"></tbody></table></div>
-    </article>
-
-    <article class="admin-card">
-      <div class="section-heading"><div><h2>Tamanhos</h2><p class="muted">A ordem controla a apresentação da grade.</p></div></div>
-      <form id="size-form" class="compact-form" hidden>
-        <label>Tamanho<input name="label" maxlength="30" required></label>
-        <label>Ordem<input name="sortOrder" type="number" step="1" value="0"></label>
-        <button class="primary-button" type="submit">Adicionar</button>
-      </form>
-      <div class="table-wrap"><table class="compact-table"><thead><tr><th>Tamanho</th><th>Ordem</th><th>Status</th><th></th></tr></thead><tbody id="sizes-body"></tbody></table></div>
-    </article>
+  <section id="quick-grade-card" class="admin-card quick-grade-card" hidden>
+    <div class="section-heading">
+      <div><h2>2. Adicione cor e tamanhos</h2><p class="muted">Escolha uma cor e marque todos os tamanhos disponíveis. O sistema cria as combinações automaticamente.</p></div>
+    </div>
+    <form id="quick-grade-form" class="quick-grade-form">
+      <label>Cor<select name="colorId" required><option value="">Selecione uma cor</option></select></label>
+      <fieldset>
+        <legend>Tamanhos</legend>
+        <div id="quick-size-options" class="quick-size-options"></div>
+      </fieldset>
+      <button class="primary-button" type="submit">Adicionar à grade</button>
+    </form>
+    <p id="quick-grade-feedback" class="feedback" role="status" aria-live="polite"></p>
   </section>
+
+  <details class="admin-card grade-advanced-settings">
+    <summary><strong>Cadastros auxiliares</strong><span class="muted">Use somente quando precisar criar ou alterar cores e tamanhos.</span></summary>
+    <div class="grade-master-grid">
+      <article>
+        <div class="section-heading"><div><h2>Cores</h2><p class="muted">Uma cor pode ser reutilizada por vários produtos.</p></div></div>
+        <form id="color-form" class="compact-form" hidden>
+          <label>Nome<input name="name" maxlength="80" required></label>
+          <label>Hex<input name="hexCode" maxlength="7" placeholder="#000000"></label>
+          <button class="primary-button" type="submit">Adicionar</button>
+        </form>
+        <div class="table-wrap"><table class="compact-table"><thead><tr><th>Cor</th><th>Hex</th><th>Status</th><th></th></tr></thead><tbody id="colors-body"></tbody></table></div>
+      </article>
+
+      <article>
+        <div class="section-heading"><div><h2>Tamanhos</h2><p class="muted">A ordem controla a apresentação da grade.</p></div></div>
+        <form id="size-form" class="compact-form" hidden>
+          <label>Tamanho<input name="label" maxlength="30" required></label>
+          <label>Ordem<input name="sortOrder" type="number" step="1" value="0"></label>
+          <button class="primary-button" type="submit">Adicionar</button>
+        </form>
+        <div class="table-wrap"><table class="compact-table"><thead><tr><th>Tamanho</th><th>Ordem</th><th>Status</th><th></th></tr></thead><tbody id="sizes-body"></tbody></table></div>
+      </article>
+    </div>
+  </details>
 
   <section id="grade-section" hidden>
     <article class="admin-card product-grade-heading">
@@ -66,5 +84,6 @@
   </section>
 </main>
 <script src="/js/grade.js" defer></script>
+<script src="/js/quick-grade.js" defer></script>
 </body>
 </html>
