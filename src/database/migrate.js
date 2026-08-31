@@ -46,7 +46,7 @@ async function getAppliedMigrations(connection) {
 async function acquireLock(connection) {
   const [rows] = await connection.query('SELECT GET_LOCK(?, 30) AS acquired', [MIGRATION_LOCK]);
 
-  if (rows[0]?.acquired !== 1) {
+  if (Number(rows[0]?.acquired) !== 1) {
     throw new Error('Não foi possível obter o lock exclusivo das migrations.');
   }
 }
