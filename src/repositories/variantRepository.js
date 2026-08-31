@@ -63,6 +63,18 @@ async function findVariantById(productId, variantId, connection = null, { forUpd
   return rows[0] || null;
 }
 
+async function findVariantByColor(productId, colorId, connection = null, { forUpdate = false } = {}) {
+  const db = connection || getPool();
+  const [rows] = await db.execute(`
+    SELECT pv.id, pv.product_id, pv.color_id, pv.variant_name, pv.is_active, c.name AS color_name, c.is_active AS color_is_active
+      FROM product_variants pv
+      JOIN colors c ON c.id = pv.color_id
+     WHERE pv.product_id = ? AND pv.color_id = ?${forUpdate ? ' FOR UPDATE' : ''}
+     LIMIT 1
+  `, [productId, colorId]);
+  return rows[0] || null;
+}
+
 async function createVariant(productId, data, connection) {
   const [result] = await connection.execute(
     'INSERT INTO product_variants (product_id, color_id, variant_name, is_active) VALUES (?, ?, ?, ?)',
@@ -99,6 +111,19 @@ async function findSkuById(variantId, skuId, connection = null, { forUpdate = fa
   return rows[0] || null;
 }
 
+async function findSkuBySize(variantId, sizeId, connection = null, { forUpdate = false } = {}) {
+  const db = connection || getPool();
+  const [rows] = await db.execute(`
+    SELECT ps.id, ps.product_variant_id, ps.size_id, ps.sku, ps.barcode, ps.cost_price, ps.sale_price,
+           ps.promotional_price, ps.minimum_stock, ps.is_active, s.label AS size_label, s.is_active AS size_is_active
+      FROM product_skus ps
+      JOIN sizes s ON s.id = ps.size_id
+     WHERE ps.product_variant_id = ? AND ps.size_id = ?${forUpdate ? ' FOR UPDATE' : ''}
+     LIMIT 1
+  `, [variantId, sizeId]);
+  return rows[0] || null;
+}
+
 async function createSku(variantId, data, connection) {
   const [result] = await connection.execute(`
     INSERT INTO product_skus (
@@ -132,6 +157,8 @@ module.exports = {
   deactivateSkusByVariant,
   findProductImageById,
   findSkuById,
+  findSkuBySize,
+  findVariantByColor,
   findVariantById,
   listGrade,
   updateSku,
